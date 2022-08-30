@@ -36,3 +36,4 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::resource('/manage/users', "App\Http\Controllers\UserController")->except(['create', 'show', 'store'])->names('users');
     Route::get('/{username}', "App\Http\Controllers\ProfileController@show")->name('profile');
 });
+

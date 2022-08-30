@@ -7,9 +7,7 @@
         button:focus{ outline:0 !important; } }
         
     </style>
-
-        <livewire:posts.view :type="null" />
-        
+            <livewire:posts.view :type="null" />
     </div>
    
 </x-app-layout>

@@ -13,7 +13,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{route('login')}}">
             @csrf
 
             <div>
@@ -44,11 +44,11 @@
                     {{ __('Log in') }}
                 </x-jet-button>
             </div>
+            
+            
+            Don't have an account yet. <a class="underline" href="{{ route('register') }}">Sign up</a> now.
+            
         </form>
-        
-    <!--<x-slot name="anchor">-->
-	   Don't have an account yet. <a class="underline" href="{{ route('register') }}">Sign up</a> now.
-	<!--</x-slot>-->
         
     </x-jet-authentication-card>
 	
