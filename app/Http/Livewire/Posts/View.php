@@ -27,10 +27,14 @@ class View extends Component
     public $postId;
 
     public $deletePostId;
+    
+    public $editPostId;
 
     public $isOpenCommentModal = false;
 
     public $isOpenDeletePostModal = false;
+    
+    public $isOpenEditPostModal = false;
 
     public function mount($type = null)
     {
@@ -112,6 +116,12 @@ class View extends Component
         $this->isOpenDeletePostModal = true;
     }
 
+    public function showEditPostModal(Post $post)
+    {
+        $this->editPostId = $post->id;
+        $this->isOpenEditPostModal = true;
+    }
+
     public function deletePost(Post $post)
     {
         $response = Gate::inspect('delete', $post);
@@ -127,6 +137,14 @@ class View extends Component
             session()->flash('error', $response->message());
         }
         $this->isOpenDeletePostModal = false;
+        return redirect()->back();
+    }
+
+    public function editPost(Post $post)
+    {
+        Post::where('user_id', $post->id)->update(['title' => 'title']);
+
+        $this->isOpenEditPostModal = false;
         return redirect()->back();
     }
 

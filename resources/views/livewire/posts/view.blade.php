@@ -55,6 +55,8 @@
 
         @include('elements.delete-post-modal')
 
+        @include('elements.edit-post-modal')
+
         @section('scripts')
          <script src='https://cdn.plyr.io/3.4.6/plyr.js'></script>
 		 <script>

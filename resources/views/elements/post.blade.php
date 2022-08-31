@@ -22,7 +22,7 @@
                     <div class="flex-auto ml-3 justify-evenly py-2" wire:offline.class="text-gray-400">
                     @can('delete', $post)
                     	<button
-							id="delete_{{ $post->id }}"
+						    id="delete_{{ $post->id }}"
 							wire:click="showDeletePostModal({{ $post->id }})"
                             class="flex float-right items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-red-600 rounded-lg dark:text-red-600 focus:outline-none focus:shadow-outline-gray"
                             wire:offline.class.remove="text-red-600"
@@ -31,30 +31,44 @@
                             wire:loading.class.remove="text-red-600"
                             wire:loading.class="bg-gray text-gray-400"
                             wire:offline.attr="disabled"
-                          >
+                        >
                             <svg
                               class="w-5 h-5"
                               aria-hidden="true"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
-                              <path
-                                fill-rule="evenodd"
-                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                clip-rule="evenodd"
-                              ></path>
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"
+                                ></path>
                             </svg>
-                          </button>
-                         @endcan
-                        <div class="flex flex-wrap ">
+                        </button>
 
+                        <!--Button for Edit Post-->
+                        <button
+                            id="edit_{{ $post->id }}"
+                            wire:click="showEditPostModal({{ $post->id }})"
+                            class="flex float-right items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-red-600 focus:outline-none focus:shadow-outline-gray"
+                            wire:offline.class.remove="text-blue-600"
+                            wire:offline.class="text-gray-400"
+                            aria-label="Edit"
+                            wire:loading.class.remove="text-blue-600"
+                            wire:loading.class="bg-gray text-gray-400"
+                            wire:offline.attr="disabled"
+                        >
+                            Edit
+                        </button>
+                        
+                    @endcan
+                        <div class="flex flex-wrap ">
                             <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
                             	<a href="{{ route('profile', ['username' => $post->user->username]) }}">
                             	<img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
                                 Posted by {{ '@' . $post->user->username }}
                                 </a>
                             </div>
-
                             <h2 class="flex-auto text-lg font-medium">{{ $post->title }}</h2>
                         </div>
 

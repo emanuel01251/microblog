@@ -8,8 +8,8 @@
             
             @if(session()->has('comment.error'))
             <div class="bg-red-100 border my-3 border-red-400 text-red-700 dark:bg-red-700 dark:border-red-600 dark:text-red-100 px-4 py-3 rounded relative" role="alert">
-				  <span class="block sm:inline text-center">{{ session()->get('comment.error') }}</span>
-			</div>
+				          <span class="block sm:inline text-center">{{ session()->get('comment.error') }}</span>
+			      </div>
             @endif
             
             <form wire:submit.prevent="createComment({{ $postId }})" >
