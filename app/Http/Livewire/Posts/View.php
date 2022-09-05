@@ -142,9 +142,9 @@ class View extends Component
 
     public function editPost(Post $post)
     {
-        Post::where('user_id', $post->id)->update(['title' => 'title']);
-
+        Post::where('user_id', $post->id)->update(['title' => $post->title]);
         $this->isOpenEditPostModal = false;
+        session()->flash('success', 'Post edited sucessfully');
         return redirect()->back();
     }
 
