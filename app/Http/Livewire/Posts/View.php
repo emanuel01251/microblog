@@ -20,6 +20,12 @@ class View extends Component
 
     public $comment;
 
+    public $title;
+
+    public $body;
+
+    public $location;
+
     public $type;
 
     public $queryType;
@@ -142,7 +148,7 @@ class View extends Component
 
     public function editPost(Post $post)
     {
-        Post::where('user_id', $post->id)->update(['title' => $post->title]);
+        Post::where('user_id', $post->id)->update(['title' => $this->title, 'body' => $this->body, 'location' => $this->location]);
         $this->isOpenEditPostModal = false;
         session()->flash('success', 'Post edited sucessfully');
         return redirect()->back();
