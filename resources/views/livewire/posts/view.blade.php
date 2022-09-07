@@ -50,9 +50,6 @@
 	        {{ $posts->links() }}
         </div>
 
-
-        @include('elements.comments-post-modal')
-
         @include('elements.delete-post-modal')
 
         @include('elements.edit-post-modal')
