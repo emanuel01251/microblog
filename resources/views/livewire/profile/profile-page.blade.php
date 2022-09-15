@@ -6,7 +6,7 @@
 </style>
 
     <!-- component -->
-    	
+
     <div class="bg-white my-12 pb-6 w-full justify-center items-center overflow-hidden md:max-w-sm rounded-lg shadow-sm mx-auto">
       <div class="relative h-40">
         <img class="absolute h-full w-full object-cover" src="https://images.unsplash.com/photo-1448932133140-b4045783ed9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80">
@@ -41,13 +41,38 @@
       </div>
 
       <div class="mt-6 pt-3 flex flex-wrap mx-6 border-t">
-        <div
-		class="py-4 flex justify-center items-center w-full divide-x divide-gray-400 divide-solid">
+        <div class="py-4 flex justify-center items-center w-full divide-x divide-gray-400 divide-solid">
 			<span class="text-center px-4">
+				<button
+					id=""
+					wire:click="showViewFollowersModal({{ $user->id }})"
+					class="flex float-right items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-red-600 focus:outline-none focus:shadow-outline-gray"
+					wire:offline.class.remove="text-blue-600"
+					wire:offline.class="text-gray-400"
+					aria-label="View Followers"
+					wire:loading.class.remove="text-blue-600"
+					wire:loading.class="bg-gray text-gray-400"
+					wire:offline.attr="disabled"
+				>
+					View Followers
+				</button>
 				<span class="font-bold text-gray-700">{{ $followersCount }}</span>
 				<span class="text-gray-600">Followers</span>
 			</span>
 			<span class="text-center px-4">
+				<button
+					id=""
+					wire:click="showViewFollowingModal({{ $user->id }})"
+					class="flex float-right items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-red-600 focus:outline-none focus:shadow-outline-gray"
+					wire:offline.class.remove="text-blue-600"
+					wire:offline.class="text-gray-400"
+					aria-label="View Following"
+					wire:loading.class.remove="text-blue-600"
+					wire:loading.class="bg-gray text-gray-400"
+					wire:offline.attr="disabled"
+				>
+					View Following
+				</button>	
 				<span class="font-bold text-gray-700">{{ $followingsCount }}</span>
 				<span class="text-gray-600">Followings</span>
 			</span>
@@ -56,6 +81,10 @@
 				<span class="font-bold text-gray-700"> {{ $postsCount }} </span>
 				<span class="text-gray-600">Posts</span>
 			</span>
+
+			@include('elements.view-followers-modal')
+			@include('elements.view-following-modal')
+			
 		</div>
       </div>
     </div>

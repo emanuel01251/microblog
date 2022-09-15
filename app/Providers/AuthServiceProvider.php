@@ -36,5 +36,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('is-not-user-profile', function (User $a, User $user) {
             return $user->id !== auth()->id();
         });
+
+        Gate::define('is-user-profile', function (User $a, User $user) {
+            return $user->id == auth()->id();
+        });
     }
 }

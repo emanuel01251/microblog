@@ -3,20 +3,20 @@
                 <div class="flex-none">
                     <div class="h-full w-full  mb-3 filter" wire:offline.class="grayscale">
                     	@foreach($post->postImages as $media)
-	                    @if($media->is_image && preg_match('/^.*\.(png|jpg|gif)$/i', $media->path))
-                        <img src="{{ url('/storage/' . $media->path) }}"
-                            alt="Image" class="w-full object-scale-down md:object-cover lg:object-cover rounded-2xl" onContextMenu="return false;">
-                        @elseif(!$media->is_image && preg_match('/^.*\.(mp4|3gp)$/i', $media->path))
-	                     <div class="container">
-						<video controls crossorigin playsinline oncontextmenu="return false;" controlsList="nodownload" class="rounded-lg filter" id="player_{{ $post->id }}">
-			                <!-- Video files -->
-			                <source src="{{ url('/storage/' . $media->path) }}" type="video/mp4" size="576">
+                            @if($media->is_image && preg_match('/^.*\.(png|jpg|gif)$/i', $media->path))
+                                <img src="{{ url('/storage/' . $media->path) }}"
+                                    alt="Image" class="w-full object-scale-down md:object-cover lg:object-cover rounded-2xl" onContextMenu="return false;">
+                                @elseif(!$media->is_image && preg_match('/^.*\.(mp4|3gp)$/i', $media->path))
+                                <div class="container">
+                                <video controls crossorigin playsinline oncontextmenu="return false;" controlsList="nodownload" class="rounded-lg filter" id="player_{{ $post->id }}">
+                                    <!-- Video files -->
+                                    <source src="{{ url('/storage/' . $media->path) }}" type="video/mp4" size="576">
 
-			                <!-- Fallback for browsers that don't support the <video> element -->
-			                <a href="{{ url('/storage/' . $media->path) }}" download>Download</a>
-			            </video>
-						</div>
-                        @endif
+                                    <!-- Fallback for browsers that don't support the <video> element -->
+                                    <a href="{{ url('/storage/' . $media->path) }}" download>Download</a>
+                                </video>
+                                </div>
+                            @endif
                         @endforeach
                     </div>
                     <div class="flex-auto ml-3 justify-evenly py-2" wire:offline.class="text-gray-400">
@@ -96,34 +96,52 @@
                             </div>
                         </div>
                         <div class="flex p-4 pb-2 border-t border-gray-200 "></div>
-                        <div class="flex space-x-3 text-sm font-medium">
-                            <div class="flex-auto flex space-x-3">
+                            <div class="flex space-x-3 text-sm font-medium">
+                                <div class="flex-auto flex space-x-3">
+                                    <button
+                                        class="mb-2 md:mb-0 bg-white px-5 py-2 shadow-sm tracking-wider border text-gray-600 rounded-full hover:bg-gray-100 inline-flex items-center space-x-2 "
+                                        wire:click="incrementLike({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="disabled">
+                                        @if($post->userLikes->count())
+                                            <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">
+                                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" />
+                                            </svg>
+                                            </div>
+                                            @else
+                                            <span class="text-gray-400 hover:text-gray-500 rounded-lg">
+                                                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                                                    <path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" />
+                                                </svg>
+                                            </span>
+                                        @endif
+                                        <span>{{ $post->likes_count }}</span>
+                                    </button>
+                                </div>
+                                <button
+                                    class="mb-2 md:mb-0 bg-gray-900 px-5 py-2 shadow-sm tracking-wider text-white rounded-full hover:bg-gray-800"
+                                    wire:click="comments({{ $post->id }})"
+                                    wire:offline.attr="enabled"
+                                    type="button" aria-label="like">{{ $post->comments_count }} Comments
+                                </button>
+                                <!--Share Button-->
                                 <button
                                     class="mb-2 md:mb-0 bg-white px-5 py-2 shadow-sm tracking-wider border text-gray-600 rounded-full hover:bg-gray-100 inline-flex items-center space-x-2 "
-                                    wire:click="incrementLike({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="disabled">
-                                    @if($post->userLikes->count())
-                                    <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">
-                                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-									    <path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" />
-									</svg>
-                                    </div>
+                                    wire:click="incrementShare({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="enabled">
+                                    @if( $post->userLikes->count() )
+                                        <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">
+                                            <span class="text-black-400 hover:text-gray-500 rounded-lg">
+                                                {{_('Shared')}}
+                                            </span>
+                                        </div>
                                     @else
-                                    <span class="text-gray-400 hover:text-gray-500 rounded-lg">
-                                        <svg style="width:24px;height:24px" viewBox="0 0 24 24">
-								    <path fill="currentColor" d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z" />
-									</svg>
-                                    </span>
+                                        <span class="text-black-400 hover:text-gray-500 rounded-lg">
+                                            {{_('Share')}}
+                                        </span>
                                     @endif
-                                    <span>{{ $post->likes_count }}</span>
+                                    <span>{{ $post->shares_count }}</span>
                                 </button>
                             </div>
-                            <button
-                                class="mb-2 md:mb-0 bg-gray-900 px-5 py-2 shadow-sm tracking-wider text-white rounded-full hover:bg-gray-800"
-                                wire:click="comments({{ $post->id }})"
-                                wire:offline.attr="disabled"
-                                type="button" aria-label="like">{{ $post->comments_count }} Comments</button>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

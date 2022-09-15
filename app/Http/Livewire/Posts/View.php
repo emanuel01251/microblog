@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire\Posts;
 
+use App\Models\User;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Share;
 use App\Models\Post;
 use Auth;
 use Exception;
@@ -19,6 +21,8 @@ class View extends Component
     public $comments = [];
 
     public $comment;
+
+    public $commentSection;
 
     public $title;
 
@@ -36,11 +40,15 @@ class View extends Component
     
     public $editPostId;
 
+    public $editCommentId;
+
     public $isOpenCommentModal = false;
 
     public $isOpenDeletePostModal = false;
     
     public $isOpenEditPostModal = false;
+
+    public $isOpenEditCommentModal = false;
 
     public function mount($type = null)
     {
@@ -64,10 +72,28 @@ class View extends Component
                 'post_id' => $post->id,
                 'user_id' => Auth::id(),
             ]);
-
+            session()->flash('success', 'You liked the post!');
             return true;
         }
         $like->delete();
+        session()->flash('success', 'You unliked the post!');
+    }
+
+    public function incrementShare(Post $post)
+    {
+        $share = Share::where('user_id', Auth::id())
+            ->where('post_id', $post->id);
+
+        if (! $share->count()) {
+            $new = Share::create([
+                'post_id' => $post->id,
+                'user_id' => Auth::id(),
+            ]);
+            session()->flash('success', 'You shared the post!');
+            return true;
+        }
+        $share->delete();
+        session()->flash('success', 'You unshared the post!');
     }
 
     public function comments($post)
@@ -101,13 +127,13 @@ class View extends Component
             'comment' => $validatedData['comment'],
         ]);
 
-        session()->flash('comment.success', 'Comment created successfully');
+        session()->flash('success', 'Comment created successfully');
 
         $this->setComments($post);
         $this->comment = '';
 
         //$this->isOpenCommentModal = false;
-        return redirect()->back();
+        return redirect()->home();
     }
 
     public function setComments($post)
@@ -148,10 +174,24 @@ class View extends Component
 
     public function editPost(Post $post)
     {
-        Post::where('user_id', $post->id)->update(['title' => $this->title, 'body' => $this->body, 'location' => $this->location]);
+        Post::where('id', $post->id)->update(['title' => $this->title, 'body' => $this->body]);
         $this->isOpenEditPostModal = false;
         session()->flash('success', 'Post edited sucessfully');
         return redirect()->back();
+    }
+
+    public function editComment(Comment $comment)
+    {
+        Comment::where('id', $comment->id)->update(['comment' => $this->commentSection]);
+        $this->isOpenEditCommentModal = false;
+        session()->flash('success', 'Comment edited successfully');
+        return redirect()->home();
+    }
+
+    public function showEditCommentModal(Comment $comment)
+    {
+        $this->editCommentId = $comment->id;
+        $this->isOpenEditCommentModal = true;
     }
 
     public function deleteComment(Post $post, Comment $comment)
@@ -189,6 +229,20 @@ class View extends Component
             },
             ])->latest()->paginate(10);
         }
+        $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->value('post_id'); 
+        if (! empty($this->queryType) && $this->queryType === 'share') {
+            while($userIds == auth()->user()->id){
+                
+                    $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->value('post_id'); 
+                    
+                    $posts = Post::withCount(['likes', 'comments'])->where('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                        $query->select(['id', 'name', 'username', 'profile_photo_path']);
+                    },
+                    ])->latest()->paginate(10);
+            
+                
+            }
+        } 
 
         return $posts;
     }

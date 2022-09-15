@@ -8,6 +8,8 @@
         </style>
 
         <livewire:posts.view :type="'me'" />
+        <center><h1>Your Shared Posts</h1></center>
+        <livewire:posts.view :type="'share'" />
         
     </div>
             

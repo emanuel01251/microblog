@@ -10,31 +10,40 @@
                         <img src="{{ url('https://media.glassdoor.com/sqll/1960738/yns-squarelogo-1533819178590.png') }}" class="block h-9 w-auto"/>
                     </a>
                 </div>
+                
+                    <!-- Navigation Links -->
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                        <x-jet-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
+                            {{ __('Home') }}
+                        </x-jet-nav-link>
+                        
+                        <x-jet-nav-link href="{{ route('feeds') }}" :active="request()->routeIs('feeds')">
+                            {{ __('Feeds') }}
+                        </x-jet-nav-link>
+                        
+                        <x-jet-nav-link href="{{ route('posts.create') }}" :active="request()->routeIs('posts.create')">
+                            {{ __('Create Post') }}
+                        </x-jet-nav-link>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
-                        {{ __('Home') }}
-                    </x-jet-nav-link>
-                    
-                    <x-jet-nav-link href="{{ route('feeds') }}" :active="request()->routeIs('feeds')">
-                        {{ __('Feeds') }}
-                    </x-jet-nav-link>
-                    
-                    <x-jet-nav-link href="{{ route('posts.create') }}" :active="request()->routeIs('posts.create')">
-                        {{ __('Create Post') }}
-                    </x-jet-nav-link>
-                    
-                    <x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
-                        {{ __('My Posts') }}
-                    </x-jet-nav-link>
+                        <x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
+                            {{ __('My Post') }}
+                        </x-jet-nav-link>
+                        
+                        <x-jet-nav-link href="/{{ auth()->user()->username }}" :active="request()->routeIs('profile')" >
+                            {{ __('View Profile') }}
+                        </x-jet-nav-link>
 
-                    @can('viewAny', auth()->user())
-                    <x-jet-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.create')">
-		                {{ __('Manage Users') }}
-		            </x-jet-nav-link>
-					@endcan
-                </div>
+                        <x-jet-nav-link href="/search" :active="request()->routeIs('search')">
+                            {{ __('Search') }}
+                        </x-jet-nav-link>
+                       
+                        @can('viewAny', auth()->user())
+                        <x-jet-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.create')">
+                            {{ __('Manage Users') }}
+                        </x-jet-nav-link>
+                        @endcan
+                    </div>
+               
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -138,8 +147,8 @@
                 {{ __('Create post') }}
             </x-jet-responsive-nav-link>
             
-            <x-jet-responsive-nav-link href="{{ route('posts.index') }}">
-                {{ __('My Posts') }}
+            <x-jet-responsive-nav-link href="/{{ auth()->user()->username }}" :active="request()->routeIs('profile')">
+                {{ __('View Profile') }}
             </x-jet-responsive-nav-link>
             
             @can('viewAny', auth()->user())

@@ -23,11 +23,11 @@
   </x-slot>
 
   <x-slot name="footer">
-    <x-jet-secondary-button wire:click="$toggle('isOpenCommentModal')" wire:loading.attr="disabled">
+    <x-jet-secondary-button wire:click="$toggle('isOpenCommentModal')" wire:loading.attr="enabled">
       {{ __('Cancel') }}
     </x-jet-secondary-button>
     
-    <x-jet-button class="ml-2" wire:loading.attr="disabled">
+    <x-jet-button type="submit" class="ml-2" wire:loading.attr="enabled">
       {{ __('Post Comment') }}
     </x-jet-button>
     </form>
@@ -57,12 +57,21 @@
               </a>
 
               <small class="self-center">.</small>
-
+              
               <button class="" wire:click="deleteComment({{ $post->id }}, {{ $comment->id }})">
                 <small>Delete</small>
               </button>
 
               <small class="self-center">.</small>
+              
+              @if(auth()->user()->id == $comment->user_id)
+               
+                <button class="" wire:click="showEditCommentModal( {{ $comment->id }} )">
+                  <small>Edit</small>
+                </button>
+                  
+                <small class="self-center">.</small>
+              @endif
 
               <a href="#" class="hover:underline">
                 <small>{{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}</small>

@@ -1,7 +1,7 @@
 <!-- Edit User Comment Modal -->
-<x-jet-dialog-modal wire:model="isOpenEditPostModal">
+<x-jet-dialog-modal wire:model="isOpenEditCommentModal">
     <x-slot name="title">
-        {{ __('Edit Post') }}
+        {{ __('Edit Comment') }}
     </x-slot>
 
     <x-slot name="content">
@@ -11,23 +11,22 @@
 				  <span class="block sm:inline text-center">{{ session()->get('post.error') }}</span>
 			</div>
         @endif
-        <form wire:submit.prevent="editPost({{ $editPostId }})" >    
-            <!--For Edit-->
+        <form wire:submit.prevent="editComment({{ $editCommentId }})" >    
+            <!--For edit comment-->
             <div class="col-span-6 sm:col-span-4">
-                <x-jet-label for="title" value="{{ __('Title') }}" />
-                <x-jet-input wire:model.lazy="title" id="" name="title" type="text" class="mt-1 block w-full" placeholder="{{ (empty($post->title) ? '' : $post->title) }}" />
+                <x-jet-label for="comment" value="{{ __('Your Comment') }}" />
+                @foreach($comments as $comment)
+                    @if($comment->id == $editCommentId)
+                        <x-jet-input wire:model.lazy="commentSection" id="" name="commentSection" type="text" class="mt-1 block w-full" value="{{ $comment->comment }}" />
+                    @endif    
+                @endforeach
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
-                <x-jet-label for="body" value="{{ __('Description') }}" />
-                <x-jet-input wire:model.lazy="body" id="" name="body" id="" name="body" type="text" class="mt-1 block w-full" placeholder="{{ (empty($post->body) ? '' : $post->body) }}" />
-            </div>
-
-            {{ __('Are you sure you want to edit this post?') }}
+            {{ __('Are you sure you want to edit your comment in this post?') }}
     </x-slot>
 
     <x-slot name="footer">
-        <x-jet-secondary-button wire:click="$toggle('isOpenEditPostModal')" wire:loading.attr="enabled">
+        <x-jet-secondary-button wire:click="$toggle('isOpenEditCommentModal')" wire:loading.attr="enabled">
             {{ __('Cancel') }}
         </x-jet-secondary-button>
 
