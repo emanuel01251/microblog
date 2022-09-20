@@ -46,7 +46,7 @@ class Post extends Model
 
     public function userShares()
     {
-        return $this->hasMany(Share::class)->where('user_id', auth()->id());
+        
     }
 
     public function user()

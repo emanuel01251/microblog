@@ -73,10 +73,11 @@ class View extends Component
                 'user_id' => Auth::id(),
             ]);
             session()->flash('success', 'You liked the post!');
-            return true;
+            return redirect()->home();
         }
         $like->delete();
         session()->flash('success', 'You unliked the post!');
+        return redirect()->home();
     }
 
     public function incrementShare(Post $post)
@@ -94,6 +95,7 @@ class View extends Component
         }
         $share->delete();
         session()->flash('success', 'You unshared the post!');
+        return true;
     }
 
     public function comments($post)
@@ -218,30 +220,29 @@ class View extends Component
             ])->latest()->paginate(10);
         } elseif (! empty($this->queryType) && $this->queryType === 'followers') {
             $userIds = Auth::user()->followings()->pluck('follower_id');
+            //$userIdsFollowing = Auth::user()->followings()->pluck('follower_id');
             $userIds[] = Auth::id();
+            
             $posts = Post::withCount(['likes', 'comments'])->whereIn('user_id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
             ])->latest()->paginate(10);
+
         } else {
             $posts = Post::withCount(['likes', 'comments'])->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
             ])->latest()->paginate(10);
         }
-        $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->value('post_id'); 
+        
         if (! empty($this->queryType) && $this->queryType === 'share') {
-            while($userIds == auth()->user()->id){
-                
-                    $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->value('post_id'); 
-                    
-                    $posts = Post::withCount(['likes', 'comments'])->where('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
-                        $query->select(['id', 'name', 'username', 'profile_photo_path']);
-                    },
-                    ])->latest()->paginate(10);
             
-                
-            }
+            $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
+            $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                $query->select(['id', 'name', 'username', 'profile_photo_path']);  
+            },
+            ])->latest()->paginate(10);
+        
         } 
 
         return $posts;

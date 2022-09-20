@@ -120,14 +120,15 @@
                                 <button
                                     class="mb-2 md:mb-0 bg-gray-900 px-5 py-2 shadow-sm tracking-wider text-white rounded-full hover:bg-gray-800"
                                     wire:click="comments({{ $post->id }})"
-                                    wire:offline.attr="enabled"
+                                    wire:offline.attr="disabled"
                                     type="button" aria-label="like">{{ $post->comments_count }} Comments
                                 </button>
                                 <!--Share Button-->
                                 <button
                                     class="mb-2 md:mb-0 bg-white px-5 py-2 shadow-sm tracking-wider border text-gray-600 rounded-full hover:bg-gray-100 inline-flex items-center space-x-2 "
-                                    wire:click="incrementShare({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="enabled">
-                                    @if( $post->userLikes->count() )
+                                    wire:click="incrementShare({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="disabled"
+                                >
+                                    @if( $post->userShares() )
                                         <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">
                                             <span class="text-black-400 hover:text-gray-500 rounded-lg">
                                                 {{_('Shared')}}
@@ -144,4 +145,5 @@
                         </div>
                 </div>
             </div>
+            
         </div>
