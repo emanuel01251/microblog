@@ -12,7 +12,7 @@
 			</div>
         @endif
         <form>    
-            <!--View Followers-->
+            <!--View Following-->
             
             {{ $showFollowing1; }}
     </x-slot>

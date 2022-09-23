@@ -18,13 +18,21 @@ class View extends Component
 {
     use WithPagination;
 
-    public $comments = [];
+    public $comments = [];  
 
     public $comment;
 
     public $commentSection;
 
     public $title;
+
+    public $caption;
+    
+    public $count = 0;
+
+    public $noContent;
+
+    public $i = 0;
 
     public $body;
 
@@ -42,6 +50,8 @@ class View extends Component
 
     public $editCommentId;
 
+    public $sharePostId;
+
     public $isOpenCommentModal = false;
 
     public $isOpenDeletePostModal = false;
@@ -49,6 +59,8 @@ class View extends Component
     public $isOpenEditPostModal = false;
 
     public $isOpenEditCommentModal = false;
+
+    public $isOpenShareModal = false;
 
     public function mount($type = null)
     {
@@ -58,8 +70,9 @@ class View extends Component
     public function render()
     {
         $posts = $this->setQuery();
-
-        return view('livewire.posts.view', ['posts' => $posts]);
+        $shares = $this->setQueryForShare();
+        
+        return view('livewire.posts.view', ['posts' => $posts, 'shares' => $shares]);
     }
 
     public function incrementLike(Post $post)
@@ -80,21 +93,20 @@ class View extends Component
         return redirect()->home();
     }
 
-    public function incrementShare(Post $post)
+    public function sharePost(Post $post)
     {
         $share = Share::where('user_id', Auth::id())
             ->where('post_id', $post->id);
-
         if (! $share->count()) {
             $new = Share::create([
                 'post_id' => $post->id,
                 'user_id' => Auth::id(),
+                'caption' => $this->caption,
             ]);
             session()->flash('success', 'You shared the post!');
+            $this->isOpenShareModal = false;
             return true;
         }
-        $share->delete();
-        session()->flash('success', 'You unshared the post!');
         return true;
     }
 
@@ -156,6 +168,23 @@ class View extends Component
         $this->isOpenEditPostModal = true;
     }
 
+    public function showShareModal(Post $post)
+    {
+        $this->sharePostId = $post->id;
+        $this->isOpenShareModal = true;
+        
+        $shareCondition = Share::where('user_id', Auth::id())
+            ->where('post_id', $post->id)->value('post_id');
+        if($shareCondition != NULL){
+            $share = Share::where('user_id', Auth::id())
+            ->where('post_id', $post->id);
+            $share->delete();
+            $this->isOpenShareModal = false;
+            session()->flash('success', 'You unshared the post!');
+        }
+
+    }
+
     public function deletePost(Post $post)
     {
         $response = Gate::inspect('delete', $post);
@@ -211,10 +240,19 @@ class View extends Component
         return redirect()->back();
     }
 
+    private function setQueryForShare(){
+        $shares = Share::where('user_id', Auth::id())->select('caption', 'post_id')->get();
+        
+        return $shares;
+    }
+
     private function setQuery()
     {
         if (! empty($this->queryType) && $this->queryType === 'me') {
-            $posts = Post::withCount(['likes', 'comments'])->where('user_id', Auth::id())->with(['userLikes', 'postImages', 'user' => function ($query) {
+            $userIds = Auth::user()->pluck('id');
+            //$userIdsFollowing = Auth::user()->followings()->pluck('follower_id');
+
+            $posts = Post::withCount(['likes', 'comments'])/*->whereNull('deleted_at')*/->where('user_id', Auth::id())->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
             ])->latest()->paginate(10);
@@ -238,11 +276,67 @@ class View extends Component
         if (! empty($this->queryType) && $this->queryType === 'share') {
             
             $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
+            
             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
             },
             ])->latest()->paginate(10);
+
+        } 
         
+        if (! empty($this->queryType) && $this->queryType === 'noShare') {
+            
+            $userIds = Post::onlyTrashed()->pluck('id');
+            $userIds1 = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
+            $count = 0;
+            $noContent = 0;
+
+            foreach($userIds1 as $var1){
+                foreach($userIds as $var2){
+                    if($var1 == $var2){
+                        $count++;
+                    }
+                    else{
+                        $count += 0;
+                    }
+                }
+            }
+
+            if($count >= 1){
+                foreach($userIds as $deletedIds){
+                    foreach($userIds as $postIds){
+                        if($postIds == $deletedIds ){
+                            $this->noContent++;
+                            break;
+                        }
+                        else{
+                           $noContent = $count;
+                        }
+                    }
+                }
+                $posts = Post::withCount(['likes', 'comments'])->where('user_id', Auth::id())->with(['userLikes', 'postImages', 'user' => function ($query) {
+                    $query->select(['id', 'name', 'username', 'profile_photo_path']);  
+                },
+                ])->latest()->paginate(10);
+                $userIds = $userIds;
+            }else{
+                $userIds = $userIds1;
+                $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                    $query->select(['id', 'name', 'username', 'profile_photo_path']);  
+                },
+                ])->latest()->paginate(10);
+            }   
+        } 
+
+        if (! empty($this->queryType) && $this->queryType === 'shareHome') {
+            $userIds = Auth::user()->followings()->pluck('follower_id');
+            //echo $userIds;
+            $userPosts = Share::whereIn('user_id', $userIds)->select('post_id')->pluck('post_id');
+            //echo $userPosts;
+            $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                $query->select(['id', 'name', 'username', 'profile_photo_path']);  
+            },
+            ])->latest()->paginate(10);
         } 
 
         return $posts;

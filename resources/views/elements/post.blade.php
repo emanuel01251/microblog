@@ -1,5 +1,42 @@
 <div class="flex flex-col mx-2 my-5 md:mx-6 md:my-12 lg:my-12 lg:w-2/5 lg:mx-auto">
             <div class="bg-white shadow-md  rounded-3xl p-4">
+                @if($type == 'noShare' || $type == 'share')
+                    <div class="flex flex-wrap ">
+                        <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                            <a href="{{ route('profile', ['username' => $post->user->username]) }}">
+                            <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                Shared by {{ '@' . Auth::user()->username }}
+                            </a>
+                        </div>
+                        
+                        <div class="w-full flex-none mb-2 text-xs text-black-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                            <h2 class="flex-auto text-lg font-medium">
+                                <?php 
+                                    foreach($shares as $share){ ?>
+                                        
+                                        <?php 
+                                            if($share->post_id == $post->id){
+                                                echo $share->caption;
+                                            }
+                                        ?>
+                                        
+                                <?php }
+                                ?>
+                            </h2>
+                        </div>
+                        
+                    </div>
+                @endif
+                @if($type == 'shareHome')
+                    <div class="flex flex-wrap ">
+                        <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                            <a href="{{ route('profile', ['username' => $post->user->username]) }}">
+                            <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                Shared by {{ '@' . $post->share }}
+                            </a>
+                        </div>
+                    </div>
+                @endif
                 <div class="flex-none">
                     <div class="h-full w-full  mb-3 filter" wire:offline.class="grayscale">
                     	@foreach($post->postImages as $media)
@@ -18,6 +55,7 @@
                                 </div>
                             @endif
                         @endforeach
+                        
                     </div>
                     <div class="flex-auto ml-3 justify-evenly py-2" wire:offline.class="text-gray-400">
                     @can('delete', $post)
@@ -62,6 +100,7 @@
                         </button>
                         
                     @endcan
+                    
                         <div class="flex flex-wrap ">
                             <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
                             	<a href="{{ route('profile', ['username' => $post->user->username]) }}">
@@ -73,7 +112,7 @@
                         </div>
 
                           <p class="mt-3">{{ $post->body }}</p>
-
+                    
                         <div class="flex py-4  text-sm text-gray-600">
                             <div class="flex-1 inline-flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none"
@@ -126,7 +165,7 @@
                                 <!--Share Button-->
                                 <button
                                     class="mb-2 md:mb-0 bg-white px-5 py-2 shadow-sm tracking-wider border text-gray-600 rounded-full hover:bg-gray-100 inline-flex items-center space-x-2 "
-                                    wire:click="incrementShare({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="disabled"
+                                    wire:click="showShareModal({{ $post->id }})" wire:offline.class="text-gray-400 hover:text-gray-500" wire:offline.attr="disabled"
                                 >
                                     @if( $post->userShares() )
                                         <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">

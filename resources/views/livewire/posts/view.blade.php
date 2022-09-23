@@ -24,10 +24,37 @@
 @endif
 
 	@forelse($posts as $post)
-
+      
       @include('elements.post')
 
     @empty
+      <?php 
+          if($noContent >= 1){ 
+            for($i = 0; $i < $noContent; $i++){ ?>
+            <div class="flex flex-col mx-2 my-5 md:mx-6 md:my-12 lg:my-12 lg:w-2/5 lg:mx-auto">
+                <div class="bg-white shadow-md rounded-3xl p-4">
+                    <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                        <a href="">
+                            <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="" alt="" />
+                            Shared by {{ '@' . Auth::user()->username }}
+                        </a>
+                    </div>
+                    <div class="flex-none">
+                        <div class=" h-full w-full mb-3">
+                            <img src="{{ asset('images/no-posts.png') }}"
+                            alt="Just a flower" class="w-full object-scale-down md:object-cover lg:object-cover  rounded-2xl">
+                        </div>
+                        <div class="flex-auto ml-3 justify-evenly py-2">
+                            <div class="flex flex-wrap ">
+                                <h2 class="flex-auto text-lg text-center font-medium">{{ __('No Content Found') }}</h2>
+                            </div>
+                            <p class="mt-3"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      <?php }
+          }else{ ?>
         <div class="flex flex-col mx-2 my-12 md:mx-32 lg:my-28 lg:mx-60">
             <div class="bg-white shadow-md rounded-3xl p-4">
                 <div class="flex-none">
@@ -46,6 +73,8 @@
                 </div>
             </div>
         </div>
+     <?php } ?>   
+  
   @endforelse
 
         <div class="py-4 mb-2">
@@ -59,6 +88,8 @@
         @include('elements.edit-post-modal')
 
         @include('elements.edit-comments-post-modal')
+
+        @include('elements.share-post-modal')
 
         @section('scripts')
          <script src='https://cdn.plyr.io/3.4.6/plyr.js'></script>

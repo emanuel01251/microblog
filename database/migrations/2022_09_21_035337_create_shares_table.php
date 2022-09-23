@@ -17,6 +17,7 @@ class CreateSharesTable extends Migration
             $table->id();
             $table->foreignId('post_id')->constrained('posts');
             $table->foreignId('user_id')->constrained('users');
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }
@@ -29,8 +30,7 @@ class CreateSharesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('shares', function (Blueprint $table) {
-            $table->dropForeign('posts_user_id_foreign');
-            $table->dropForeign('posts_post_id_foreign');
+            $table->dropSoftDeletes();
         });
     }
 }
