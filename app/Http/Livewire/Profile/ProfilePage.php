@@ -88,12 +88,12 @@ class ProfilePage extends Component
     {
         Gate::authorize('is-user-profile', $this->user);
         $this->isOpenViewFollowingModal = true;
-        $showFollowing = Follower::where('following_id', $user->id)->select('follower_id')->pluck('follower_id'); 
+        $showFollowing = Follower::where('following_id', $user->id)->pluck('follower_id'); 
         
         if($showFollowing == '[]'){
             $this->showFollowing1 = "You haven't follow anyone.";
         }else{
-            $this->showFollowing1 = User::whereIn('id', $showFollowing)->select('name')->pluck('name');
+            $this->showFollowing1 = User::whereIn('id', $showFollowing)->pluck('name');
         }
     }
 }

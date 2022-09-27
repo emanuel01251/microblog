@@ -1,42 +1,67 @@
 <div class="flex flex-col mx-2 my-5 md:mx-6 md:my-12 lg:my-12 lg:w-2/5 lg:mx-auto">
             <div class="bg-white shadow-md  rounded-3xl p-4">
-                @if($type == 'noShare' || $type == 'share')
                     <div class="flex flex-wrap ">
                         <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
                             <a href="{{ route('profile', ['username' => $post->user->username]) }}">
-                            <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
-                                Shared by {{ '@' . Auth::user()->username }}
+                                @if($type == 'shareHome')
+                                    <?php
+                                        $c = 0;
+                                        foreach($shareUser as $user){
+                                            if($user == $post->id){
+                                            ?>
+                                                <a href="{{ route('profile', ['username' => $sharedBy1[$c]]) }}">
+                                                <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                    wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                            <?php
+                                                echo "Shared by @" . $sharedBy1[$c];
+                                                break;
+                                            }
+                                            $c++;
+                                        }
+                                        
+                                    ?>
+                                @elseif($type == 'share')
+                                    <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                    Shared by {{ '@' . Auth::user()->username }}
+                                @elseif($type == 'followers')
+                                    
+                                @else
+
+                                @endif
                             </a>
                         </div>
-                        
+
                         <div class="w-full flex-none mb-2 text-xs text-black-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
                             <h2 class="flex-auto text-lg font-medium">
-                                <?php 
-                                    foreach($shares as $share){ ?>
-                                        
-                                        <?php 
+                                <?php
+                                    if($type != 'followers' && $type == 'share'){
+                                        //Caption share for my post
+                                        foreach($shares as $share){
                                             if($share->post_id == $post->id){
                                                 echo $share->caption;
                                             }
-                                        ?>
-                                        
-                                <?php }
+                                        }
+                                    }
+                                    if($type == 'shareHome'){
+                                        //Caption share for other user's post
+                                        $c = 0;
+                                        foreach($shareUser as $user){
+                                            $c += 1;
+                                        }
+                                        foreach($shareUser as $user){
+                                            $c--;
+                                            if($user == $post->id){
+                                                echo $shareCaption1[$c];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
                                 ?>
                             </h2>
                         </div>
                         
                     </div>
-                @endif
-                @if($type == 'shareHome')
-                    <div class="flex flex-wrap ">
-                        <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
-                            <a href="{{ route('profile', ['username' => $post->user->username]) }}">
-                            <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
-                                Shared by {{ '@' . $post->share }}
-                            </a>
-                        </div>
-                    </div>
-                @endif
                 <div class="flex-none">
                     <div class="h-full w-full  mb-3 filter" wire:offline.class="grayscale">
                     	@foreach($post->postImages as $media)

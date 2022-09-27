@@ -8,9 +8,15 @@
 </style>
 
     <livewire:posts.view :type="'followers'" />
+	
 	<livewire:posts.view :type="'shareHome'" />
+	
     <livewire:posts.view :type="'share'" />
+	
 	<livewire:posts.view :type="'noShare'" />
+	
+	<livewire:posts.view :type="'noShareFeed'" />
+
 </div>
             
 </x-app-layout>

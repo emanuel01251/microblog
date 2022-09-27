@@ -14,7 +14,9 @@
         <form>    
             <!--View Following-->
             
-            {{ $showFollowing1; }}
+            <?php
+                echo $showFollowing1;
+            ?>
     </x-slot>
 
     <x-slot name="footer">
