@@ -56,6 +56,12 @@ class View extends Component
     
     public $sharedBy1;
 
+    public $multipleShared;
+
+    public $multipleSharedUser1;
+    
+    public $shareCaptionSameUser;
+
     public $conditionSharedBy;
 
     public $shareCaption;
@@ -63,6 +69,8 @@ class View extends Component
     public $shareUser;
 
     public $shareCaption1 = [];
+    
+    public $count1;
 
     public $isOpenCommentModal = false;
 
@@ -393,34 +401,38 @@ class View extends Component
         //Code for a Share post of other users in Feeds
         if (! empty($this->queryType) && $this->queryType === 'shareHome') {
             $userIds = Auth::user()->followings()->pluck('follower_id');
-            
+
+            $a = 0;
+        
             $userPosts = Share::whereIn('user_id', $userIds)->select('post_id')->pluck('post_id');
             
-            $shareCaption = Share::whereIn('user_id', $userIds)->pluck('caption', 'user_id');
+            $shareCaption = Share::whereIn('user_id', $userIds)->select('caption')->pluck('caption');
+            //echo $shareCaption;
             $i = 0;
             $sharedBy = User::whereIn('id', $userIds)->pluck('username', 'id');
             
             if($userPosts == "[]"){
+
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
                 ])->latest()->paginate(10);  
             }else{
+                //Caption
                 foreach($userIds as $ids){
-            
                     foreach($shareCaption as $caption){
                         $userCaption = Share::where('caption', $caption)->where('user_id', $ids)->value('caption');
                         if($userCaption == $caption){
                             $shareCaption1[$i] = $caption;
                             $i++;
-    
+                            
                             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userPosts)->with(['userLikes', 'postImages', 'user' => function ($query) {
                                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                             },
                             ])->latest()->paginate(10);
                             
                         }else{
-                            $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
+                            $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userPosts)->with(['userLikes', 'postImages', 'user' => function ($query) {
                                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                             },
                             ])->latest()->paginate(10);  
@@ -428,15 +440,66 @@ class View extends Component
                     }   
                 }
                 
+                //code for multiple shared post in a single post
+                $s = 0;
+                $e = 0;
+                $count = 0;
+                $count1 = 0;
+                foreach($userIds as $userid1){
+                    $count1++; //count if $userIds has 2 or more iteration, if not then it has single iteration
+                    foreach($userIds as $userid2){
+                        if($userid1 != $userid2){
+                            $userPosts1 = Share::where('user_id', $userid1)->select('post_id')->pluck('post_id');
+                            
+                            $userPosts2 = Share::where('user_id', $userid2)->select('post_id')->pluck('post_id');
+                           
+                            foreach($userPosts1 as $user1){
+                                foreach($userPosts2 as $user2){ 
+                                    if($user1 == $user2){
+                                        $count++;
+                                        //echo " user1: ".$user1;
+                                        //echo " user2: ".$user2;
+                                        //echo " username1: ". $userid1;
+                                        //echo " username2: ". $userid2;
+                                        $multipleShared[$s] = $user2;
+                                        $multipleSharedUser[$s] = $userid2;
+                                        //echo $multipleSharedUser[$s];
+                                        //Caption within the same shared post
+                                        $shareCaptionSameUser[$s] = Share::where('user_id', $userid2)->where('post_id', $user2)->value('caption', 'user_id');
+                                        $s++;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                if($count1 > 1){
+                    $multipleSharedUser1 = User::whereIn('id', $multipleSharedUser)->select('name')->pluck('name');
+                    
+                    $this->count = $count;
+                    $this->multipleShared = $multipleShared;
+                    $this->multipleSharedUser1 = $multipleSharedUser1;
+                    $this->shareCaptionSameUser = $shareCaptionSameUser;
+                }else{
+                    //if user has only 1 following.
+                    $multipleSharedUser1 = User::whereIn('id', $userIds)->select('name')->pluck('name');
+                    $shareCaptionSameUser = Share::whereIn('user_id', $userIds)->value('caption', 'user_id');
+                    $this->count = $count;
+                    $this->count1 = $count1;
+                    $this->multipleSharedUser1 = $multipleSharedUser1;
+                    $this->shareCaptionSameUser = $shareCaptionSameUser;
+                }
+                
             }
-
+            //Caption for other user
             $i = 0;
             foreach($sharedBy as $shared){
                 $sharedBy1[$i] = $shared;
                 $i++;
             }
             if($sharedBy == "[]"){
-                
+
             }else{
                 $this->sharedBy1 = $sharedBy1;
                 $this->sharedBy = $sharedBy;

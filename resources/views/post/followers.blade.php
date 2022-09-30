@@ -6,15 +6,15 @@
 	button:focus{ outline:0 !important; } }
 	
 </style>
-
+	<center><h1>followers</h1></center>
     <livewire:posts.view :type="'followers'" />
-	
+	<center><h1>sharehome</h1></center>
 	<livewire:posts.view :type="'shareHome'" />
-	
+	<center><h1>share</h1></center>
     <livewire:posts.view :type="'share'" />
-	
+	<center><h1>noShare</h1></center>
 	<livewire:posts.view :type="'noShare'" />
-	
+	<center><h1>noShareFeed</h1></center>
 	<livewire:posts.view :type="'noShareFeed'" />
 
 </div>

@@ -6,18 +6,94 @@
                                 @if($type == 'shareHome')
                                     <?php
                                         $c = 0;
-                                        foreach($shareUser as $user){
-                                            if($user == $post->id){
-                                            ?>
-                                                <a href="{{ route('profile', ['username' => $sharedBy1[$c]]) }}">
-                                                <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
-                                                    wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
-                                            <?php
-                                                echo "Shared by @" . $sharedBy1[$c];
-                                                break;
+                                        $z = 0;
+                                        
+                                        if($count1 == 1){ //if user has only 1 following
+                                            foreach($shareUser as $user){
+                                                if($user == $post->id){
+                                                    //code for multiple shared post in a single post
+                                                        foreach($multipleSharedUser1 as $multiple){
+                                                            ?>
+                                                                <a href="{{ route('profile', ['username' => $multiple]) }}">
+                                                                <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                                    wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                                            <?php
+                                                            echo "Shared by @" . $multiple;
+                                                            ?>
+                                                                </a>
+                                                                <div class="w-full flex-none mb-2 text-xs text-black-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                                                                    <h2 class="flex-auto text-lg font-medium text-black">
+                                                                        <?php
+                                                                            echo $shareCaptionSameUser;
+                                                                        ?>
+                                                                    </h2>
+                                                                </div>
+                                                            <?php
+                                                        } 
+                                                }else{
+                                                    ?>
+                                                            
+                                                    <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                        wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                                <?php
+                                                    //echo "Shared by @" . $sharedBy1[$c];
+                                                    break; 
+                                                }    
                                             }
-                                            $c++;
+                                        }else{
+                                            foreach($shareUser as $user){
+                                                if($user == $post->id){
+                                                    if($multipleShared[$c] == $post->id){
+                                                        //echo $multipleShared[0];
+                                                        foreach($multipleSharedUser1 as $multiple){
+                                                            ?>
+                                                                <a href="{{ route('profile', ['username' => $multiple]) }}">
+                                                                <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                                    wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                                            <?php
+                                                            echo "Shared by @" . $multiple;
+                                                            ?>
+                                                                </a>
+                                                                <div class="w-full flex-none mb-2 text-xs text-black-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                                                                    <h2 class="flex-auto text-lg font-medium text-black">
+                                                                        <?php
+                                                                            echo $shareCaptionSameUser[$c];
+                                                                            $c++;
+                                                                        ?>
+                                                                    </h2>
+                                                                </div>
+                                                            <?php
+                                                        } 
+                                                        $c++;
+                                                        break;
+                                                    }else{
+                                                        $countCondition = 0;
+
+                                                        foreach($multipleSharedUser1 as $user){
+                                                            $countCondition++;
+                                                        }
+                                                        $countCondition--;
+                                                    ?>
+                                                        <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                            wire:offline.class="filter grayscale" src="{{ $post->user->profile_photo_url }}" alt="{{ $post->user->name }}" />
+                                                    <?php
+                                                        $c = 0;
+                                                        foreach($shareUser as $user){
+                                                            $c += 1;
+                                                        }
+                                                        foreach($shareUser as $user){
+                                                            $c--;
+                                                            if($user == $post->id){
+                                                                echo "Shared by @".$sharedBy1[$c];
+                                                                break;
+                                                            }
+                                                        }
+                                                        
+                                                    }
+                                                }
+                                            }
                                         }
+                                        
                                         
                                     ?>
                                 @elseif($type == 'share')
@@ -44,17 +120,24 @@
                                     }
                                     if($type == 'shareHome'){
                                         //Caption share for other user's post
-                                        $c = 0;
+                                        $j = 0;
+                                        $g = 0;
                                         foreach($shareUser as $user){
-                                            $c += 1;
+                                            $j += 1;
                                         }
-                                        foreach($shareUser as $user){
-                                            $c--;
-                                            if($user == $post->id){
-                                                echo $shareCaption1[$c];
-                                                break;
+                                        if($multipleShared == null){
+                                            
+                                        }else{
+                                            foreach($shareUser as $user){
+                                                if($user == $post->id && $post->id != $multipleShared[0]){
+                                                    //echo $user;
+                                                    //echo $post->id;    
+                                                    echo $shareCaption1[$g];
+                                                }
+                                                $g++;
                                             }
                                         }
+                                        
                                     }
                                     
                                 ?>
