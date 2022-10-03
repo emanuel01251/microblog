@@ -90,7 +90,7 @@ class View extends Component
     public function render()
     {
         $posts = $this->setQuery();
-        $shares = $this->setQueryForShare();
+        $shares = $this->setQueryForShares();
         
         return view('livewire.posts.view', ['posts' => $posts, 'shares' => $shares]);
     }
@@ -260,14 +260,33 @@ class View extends Component
         return redirect()->back();
     }
 
-    private function setQueryForShare(){
-        $shares = Share::where('user_id', Auth::id())->select('caption', 'post_id')->get();
+    private function setQueryForShares(){
+        if (! empty($this->queryType) && $this->queryType === 'shareOtherUser') {
+            $userIds = Auth::user()->followings()->pluck('follower_id');
+            $userIds[] = Auth::id();
+            
+            $shares = Share::whereIn('user_id', $userIds)->select('caption', 'post_id', 'user_id')->get();
+
+        }
+        else if (! empty($this->queryType) && $this->queryType === 'MyShare') {
+            $shares = Share::where('user_id', Auth::id())->select('caption', 'post_id', 'user_id')->get();
+        }
+        else if(! empty($this->queryType) && $this->queryType === 'MyShareNoContent'){
+            $userIds = Post::onlyTrashed()->pluck('id');
+            $shares = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
+        }
+        else if(! empty($this->queryType) && $this->queryType === 'shareNoContentUser'){
+            $userIds = Post::onlyTrashed()->pluck('id');
+            $shares = Share::where('user_id', Auth::id())->select('caption', 'post_id', 'user_id')->get();
+        }
+        else{
+            $shares = Share::whereIn('user_id', [0])->select('caption', 'post_id')->get();
+        }
         
         return $shares;
     }
-
-    private function setQuery()
-    {
+    
+    private function setQuery(){
         if (! empty($this->queryType) && $this->queryType === 'me') {
             $userIds = Auth::user()->pluck('id');
             //$userIdsFollowing = Auth::user()->followings()->pluck('follower_id');
@@ -292,7 +311,7 @@ class View extends Component
             ])->latest()->paginate(10);
         }
         //My Post - my shared post
-        if (! empty($this->queryType) && $this->queryType === 'share') {
+        if (! empty($this->queryType) && $this->queryType === 'MyShare') {
             
             $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
             
@@ -303,7 +322,7 @@ class View extends Component
 
         }
         //No Content Found of other users - Feeds
-        if (! empty($this->queryType) && $this->queryType === 'noShareFeed') {
+        if (! empty($this->queryType) && $this->queryType === 'shareNoContentUser') {
             $count = 0;
             $noContent = 0;
 
@@ -330,19 +349,19 @@ class View extends Component
                     }
                 }
             }
-                
             if($count >= 1){
-                foreach($userIds as $deletedIds){
+                foreach($userIds1 as $deletedIds){
                     foreach($userIds as $postIds){
                         if($postIds == $deletedIds ){
-                            $this->noContent++;
-                            break;
+                            $noContent++;
+                            
                         }
                         else{
-                           $noContent = $count;
+                           
                         }
                     }
                 }
+                
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
@@ -354,9 +373,11 @@ class View extends Component
                 },
                 ])->latest()->paginate(10);
             }   
+            $this->noContent = $noContent;
+            $this->count = $count;
         }
         //No Content Found - My Post
-        if (! empty($this->queryType) && $this->queryType === 'noShare') {
+        if (! empty($this->queryType) && $this->queryType === 'MyShareNoContent') {
             
             $userIds = Post::onlyTrashed()->pluck('id');
             $userIds1 = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
@@ -399,20 +420,12 @@ class View extends Component
             }   
         } 
         //Code for a Share post of other users in Feeds
-        if (! empty($this->queryType) && $this->queryType === 'shareHome') {
+        if (! empty($this->queryType) && $this->queryType === 'shareOtherUser') {
             $userIds = Auth::user()->followings()->pluck('follower_id');
-
-            $a = 0;
-        
             $userPosts = Share::whereIn('user_id', $userIds)->select('post_id')->pluck('post_id');
-            
             $shareCaption = Share::whereIn('user_id', $userIds)->select('caption')->pluck('caption');
-            //echo $shareCaption;
-            $i = 0;
-            $sharedBy = User::whereIn('id', $userIds)->pluck('username', 'id');
-            
-            if($userPosts == "[]"){
 
+            if($userPosts == "[]"){
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
@@ -423,9 +436,7 @@ class View extends Component
                     foreach($shareCaption as $caption){
                         $userCaption = Share::where('caption', $caption)->where('user_id', $ids)->value('caption');
                         if($userCaption == $caption){
-                            $shareCaption1[$i] = $caption;
-                            $i++;
-                            
+
                             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userPosts)->with(['userLikes', 'postImages', 'user' => function ($query) {
                                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                             },
@@ -439,76 +450,8 @@ class View extends Component
                         }
                     }   
                 }
-                
-                //code for multiple shared post in a single post
-                $s = 0;
-                $e = 0;
-                $count = 0;
-                $count1 = 0;
-                foreach($userIds as $userid1){
-                    $count1++; //count if $userIds has 2 or more iteration, if not then it has single iteration
-                    foreach($userIds as $userid2){
-                        if($userid1 != $userid2){
-                            $userPosts1 = Share::where('user_id', $userid1)->select('post_id')->pluck('post_id');
-                            
-                            $userPosts2 = Share::where('user_id', $userid2)->select('post_id')->pluck('post_id');
-                           
-                            foreach($userPosts1 as $user1){
-                                foreach($userPosts2 as $user2){ 
-                                    if($user1 == $user2){
-                                        $count++;
-                                        //echo " user1: ".$user1;
-                                        //echo " user2: ".$user2;
-                                        //echo " username1: ". $userid1;
-                                        //echo " username2: ". $userid2;
-                                        $multipleShared[$s] = $user2;
-                                        $multipleSharedUser[$s] = $userid2;
-                                        //echo $multipleSharedUser[$s];
-                                        //Caption within the same shared post
-                                        $shareCaptionSameUser[$s] = Share::where('user_id', $userid2)->where('post_id', $user2)->value('caption', 'user_id');
-                                        $s++;
-                                    }
-                                }
-                            }
-                            
-                        }
-                    }
-                }
-                if($count1 > 1){
-                    $multipleSharedUser1 = User::whereIn('id', $multipleSharedUser)->select('name')->pluck('name');
-                    
-                    $this->count = $count;
-                    $this->multipleShared = $multipleShared;
-                    $this->multipleSharedUser1 = $multipleSharedUser1;
-                    $this->shareCaptionSameUser = $shareCaptionSameUser;
-                }else{
-                    //if user has only 1 following.
-                    $multipleSharedUser1 = User::whereIn('id', $userIds)->select('name')->pluck('name');
-                    $shareCaptionSameUser = Share::whereIn('user_id', $userIds)->value('caption', 'user_id');
-                    $this->count = $count;
-                    $this->count1 = $count1;
-                    $this->multipleSharedUser1 = $multipleSharedUser1;
-                    $this->shareCaptionSameUser = $shareCaptionSameUser;
-                }
-                
             }
-            //Caption for other user
-            $i = 0;
-            foreach($sharedBy as $shared){
-                $sharedBy1[$i] = $shared;
-                $i++;
-            }
-            if($sharedBy == "[]"){
-
-            }else{
-                $this->sharedBy1 = $sharedBy1;
-                $this->sharedBy = $sharedBy;
-                $this->shareUser = Share::whereIn('user_id', $userIds)->whereIn('caption', $shareCaption)->pluck('post_id', 'caption');
-                $this->shareCaption1 = $shareCaption1;
-            }
-            
-        } 
-
+        }
         return $posts;
     }
 }

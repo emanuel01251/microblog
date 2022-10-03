@@ -8,14 +8,14 @@
 </style>
 	<center><h1>followers</h1></center>
     <livewire:posts.view :type="'followers'" />
-	<center><h1>sharehome</h1></center>
-	<livewire:posts.view :type="'shareHome'" />
-	<center><h1>share</h1></center>
-    <livewire:posts.view :type="'share'" />
-	<center><h1>noShare</h1></center>
-	<livewire:posts.view :type="'noShare'" />
-	<center><h1>noShareFeed</h1></center>
-	<livewire:posts.view :type="'noShareFeed'" />
+	<center><h1>shareOtherUser</h1></center>
+	<livewire:posts.view :type="'shareOtherUser'" />
+	<center><h1>MyShare</h1></center>
+    <livewire:posts.view :type="'MyShare'" />
+	<center><h1>MyShareNoContent</h1></center>
+	<livewire:posts.view :type="'MyShareNoContent'" />
+	<center><h1>shareNoContentUser</h1></center>
+	<livewire:posts.view :type="'shareNoContentUser'" />
 
 </div>
             

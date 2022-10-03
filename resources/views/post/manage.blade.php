@@ -9,8 +9,8 @@
 
         <livewire:posts.view :type="'me'" />
         <center><h1>Your Shared Posts</h1></center>
-        <livewire:posts.view :type="'share'" />
-        <livewire:posts.view :type="'noShare'" />
+        <livewire:posts.view :type="'MyShare'" />
+        <livewire:posts.view :type="'MyShareNoContent'" />
 
     </div>
             

@@ -30,16 +30,17 @@
     @empty
       <?php 
           if($noContent >= 1){ 
-            for($i = 0; $i < $noContent; $i++){ ?>
+            for($i = 0; $i < 3; $i++){ ?>
               <div class="flex flex-col mx-2 my-5 md:mx-6 md:my-12 lg:my-12 lg:w-2/5 lg:mx-auto">
                   <div class="bg-white shadow-md rounded-3xl p-4">
                       <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
                           <a href="">
                               <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" wire:offline.class="filter grayscale" src="" alt="" />
-                              @if($type == 'noShareFeed')
+                              @if($type == 'shareNoContentUser')
                                 Shared by {{ '@' . $sharedBy }}
+                                
                               @endif
-                              @if($type == 'noShare')
+                              @if($type == 'MyShareNoContent')
                                 Shared by {{ '@' . Auth::user()->username }}
                               @endif
                           </a>
