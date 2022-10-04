@@ -27,8 +27,13 @@
                                         </div>
                                         <?php               
                                     }
-                                }    
+                                    
+                                    foreach($deletedIds as $deleted){
+                                        echo "wtf";
+                                    }
+                                }   
                             ?>
+                            
                         @elseif($type == 'MyShare')
                             <?php
                                 //Caption share for other user's post without multiple shared in a single post

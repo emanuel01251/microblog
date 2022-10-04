@@ -72,6 +72,10 @@ class View extends Component
     
     public $count1;
 
+    public $deletedIds = [];
+
+    public $userDeleted = [];
+
     public $isOpenCommentModal = false;
 
     public $isOpenDeletePostModal = false;
@@ -273,11 +277,11 @@ class View extends Component
         }
         else if(! empty($this->queryType) && $this->queryType === 'MyShareNoContent'){
             $userIds = Post::onlyTrashed()->pluck('id');
-            $shares = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
+            $shares = Share::where('user_id', auth()->user()->id)->select('caption', 'post_id', 'user_id')->get();
         }
         else if(! empty($this->queryType) && $this->queryType === 'shareNoContentUser'){
             $userIds = Post::onlyTrashed()->pluck('id');
-            $shares = Share::where('user_id', Auth::id())->select('caption', 'post_id', 'user_id')->get();
+            $shares = Share::where('user_id', 3)->select('caption', 'post_id', 'user_id')->get();
         }
         else{
             $shares = Share::whereIn('user_id', [0])->select('caption', 'post_id')->get();
@@ -314,29 +318,42 @@ class View extends Component
         if (! empty($this->queryType) && $this->queryType === 'MyShare') {
             
             $userIds = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
-            
+
             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
             },
             ])->latest()->paginate(10);
 
         }
-        //No Content Found of other users - Feeds
+        //No Content Found of other users - Home
         if (! empty($this->queryType) && $this->queryType === 'shareNoContentUser') {
             $count = 0;
             $noContent = 0;
-
+            $g = 0;
+            $deletedIds = [];
+            $userDeleted = [];
+            
             $userIds = Auth::user()->followings()->pluck('follower_id');
             $userIds1 = Post::onlyTrashed()->pluck('id');
             $trashIds = Post::onlyTrashed()->pluck('id');
             $this->sharedBy = User::whereIn('id', $userIds)->value('name');
-
-            //This code is for "Shared by: " logic
+            
+            //Check if other user has deleted post ids
             foreach($userIds as $followingIds){
                 foreach($trashIds as $trash){
                     $new = Share::where('user_id', $followingIds)->select('post_id')->pluck('post_id');
+                    foreach($new as $var1){
+                        if($var1 == $trash){
+                            $this->deletedIds[$g] = $var1;
+                            $this->userDeleted[$g] = $followingIds;
+                            $g++;
+                        }
+                    }
+                    
                 }
             }
+            //echo $deletedIds[0];
+            //echo $userDeleted[0];
             
             //This code is for No Content Found
             foreach($userIds as $var1){
@@ -350,19 +367,7 @@ class View extends Component
                 }
             }
             if($count >= 1){
-                foreach($userIds1 as $deletedIds){
-                    foreach($userIds as $postIds){
-                        if($postIds == $deletedIds ){
-                            $noContent++;
-                            
-                        }
-                        else{
-                           
-                        }
-                    }
-                }
-                
-                $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                $posts = Post::withCount(['likes', 'comments'])->where('id', $deletedIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
                 ])->latest()->paginate(10);
@@ -375,16 +380,37 @@ class View extends Component
             }   
             $this->noContent = $noContent;
             $this->count = $count;
+            
         }
         //No Content Found - My Post
         if (! empty($this->queryType) && $this->queryType === 'MyShareNoContent') {
-            
-            $userIds = Post::onlyTrashed()->pluck('id');
-            $userIds1 = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id'); 
             $count = 0;
             $noContent = 0;
-
-            foreach($userIds1 as $var1){
+            $g = 0;
+            $deletedIds = [];
+            $userDeleted = [];
+            
+            $userIds = Auth::user()->followings()->pluck('follower_id');
+            $userIds1 = Post::onlyTrashed()->pluck('id');
+            $trashIds = Post::onlyTrashed()->pluck('id');
+            $this->sharedBy = User::whereIn('id', $userIds)->value('name');
+            
+            //Check if other user has deleted post ids
+            foreach($trashIds as $trash){
+                $new = Share::where('user_id', auth()->user()->id)->select('post_id')->pluck('post_id');
+                foreach($new as $var1){
+                    if($var1 == $trash){
+                        $this->deletedIds[$g] = $var1;
+                        //$userDeleted[] = ;
+                        $g++;
+                    }
+                }     
+            }
+            //echo $deletedIds[0];
+            //echo $userDeleted[0];
+            
+            //This code is for No Content Found
+            foreach($userIds as $var1){
                 foreach($userIds as $var2){
                     if($var1 == $var2){
                         $count++;
@@ -394,20 +420,8 @@ class View extends Component
                     }
                 }
             }
-                
             if($count >= 1){
-                foreach($userIds as $deletedIds){
-                    foreach($userIds1 as $postIds){
-                        if($postIds == $deletedIds ){
-                            $this->noContent++;
-                            break;
-                        }
-                        else{
-                           $noContent = $count;
-                        }
-                    }
-                }
-                $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+                $posts = Post::withCount(['likes', 'comments'])->where('id', $deletedIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
                 ])->latest()->paginate(10);
@@ -418,6 +432,9 @@ class View extends Component
                 },
                 ])->latest()->paginate(10);
             }   
+            $this->noContent = $noContent;
+            $this->count = $count;
+            
         } 
         //Code for a Share post of other users in Feeds
         if (! empty($this->queryType) && $this->queryType === 'shareOtherUser') {

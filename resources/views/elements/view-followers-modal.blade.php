@@ -13,8 +13,12 @@
         @endif
         <form>    
             <!--View Followers-->
-
-            {{ $showFollower1; }}
+            <?php
+                foreach($showFollower1 as $follow){
+                    $name = App\Models\User::where('id', $follow)->value('username');
+                    echo $name . "<br>";
+                }
+            ?>
     </x-slot>
 
     <x-slot name="footer">

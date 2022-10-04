@@ -15,7 +15,10 @@
             <!--View Following-->
             
             <?php
-                echo $showFollowing1;
+                foreach($showFollowing1 as $follow){
+                    $name = App\Models\User::where('id', $follow)->value('username');
+                    echo $name . "<br>";
+                }
             ?>
     </x-slot>
 

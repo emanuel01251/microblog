@@ -15,11 +15,11 @@ class ProfilePage extends Component
 
     public $showFollower;
 
-    public $showFollower1;
+    public $showFollower1 = [];
 
     public $showFollowing;
 
-    public $showFollowing1;
+    public $showFollowing1 = [];
 
     public $followers;
 
@@ -79,7 +79,12 @@ class ProfilePage extends Component
         if($showFollower == '[]'){
             $this->showFollower1 = "You don't have follower.";
         }else{
-            $this->showFollower1 = User::whereIn('id', $showFollower)->select('name')->pluck('name');  
+            $g = 0;
+            $following = User::whereIn('id', $showFollower)->pluck('id');
+            foreach($following as $follow){
+                $this->showFollower1[$g] = $follow;
+                $g++;
+            }
         }
         
     }
@@ -93,7 +98,13 @@ class ProfilePage extends Component
         if($showFollowing == '[]'){
             $this->showFollowing1 = "You haven't follow anyone.";
         }else{
-            $this->showFollowing1 = User::whereIn('id', $showFollowing)->pluck('name');
+            $g = 0;
+            $following = User::whereIn('id', $showFollowing)->pluck('id');
+            foreach($following as $follow){
+                $this->showFollowing1[$g] = $follow;
+                $g++;
+            }
+            
         }
     }
 }
