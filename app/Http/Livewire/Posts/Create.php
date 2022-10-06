@@ -48,7 +48,7 @@ class Create extends Component
         $data = $this->validate([
             'title' => 'required|max:50',
             'location' => 'nullable|string|max:60',
-            'body' => 'required|max:1000',
+            'body' => 'required|max:140',
             'file' => 'nullable|mimes:' . implode(',', array_merge($this->imageFormats, $this->videoFormats)) . '|max:2048',
         ]);
 

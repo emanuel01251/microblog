@@ -11,7 +11,7 @@
 </style>
 @endsection
 
-@if(session()->has('success'))
+@if(session()->has('success') && $type == 'followers')
   <div class="bg-green-100 border my-3 border-green-400 text-green-700 dark:bg-green-700 dark:border-green-600 dark:text-green-100 px-4 py-3 rounded relative" role="alert">
     <span class="block sm:inline text-center">{{ session()->get('success') }}</span>
   </div>
@@ -26,6 +26,16 @@
 	@forelse($posts as $post)
       
       @include('elements.post')
+      
+      @include('elements.comments-post-modal')
+
+      @include('elements.delete-post-modal')
+
+      @include('elements.edit-post-modal')
+
+      @include('elements.edit-comments-post-modal')
+
+      @include('elements.share-post-modal')
       
     @empty
       <?php 
@@ -87,22 +97,8 @@
           }
         }
       ?> 
-  
+    
   @endforelse
-
-        <div class="py-4 mb-2">
-	        {{ $posts->links() }}
-        </div>
-
-        @include('elements.comments-post-modal')
-
-        @include('elements.delete-post-modal')
-
-        @include('elements.edit-post-modal')
-
-        @include('elements.edit-comments-post-modal')
-
-        @include('elements.share-post-modal')
 
         @section('scripts')
          <script src='https://cdn.plyr.io/3.4.6/plyr.js'></script>
@@ -157,5 +153,11 @@
 });
 		 </script>
 		@endsection
+  <!--Pagination-->
 
+  <div class="py-4 mb-2">
+
+    {{ $posts->links() }}
+      
+  </div>
 </div>

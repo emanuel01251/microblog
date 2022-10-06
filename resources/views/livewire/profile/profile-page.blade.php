@@ -1,3 +1,19 @@
+<?php
+
+namespace App\Http\Livewire\Posts;
+
+use App\Models\User;
+use App\Models\Comment;
+use App\Models\Like;
+use App\Models\Share;
+use App\Models\Post;
+use Auth;
+use Exception;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Livewire\Component;
+use Livewire\WithPagination;
+?>
 <div class="container px-3 mx-auto grid bg-gray-100">
 <style>
 	input, textarea, button, select, a { -webkit-tap-highlight-color: rgba(0,0,0,0); }
@@ -88,4 +104,34 @@
 		</div>
       </div>
     </div>
+
+	<!--My Post-->
+	<?php
+		//My posts
+		$id = User::where('username', $user->username)->pluck('id');
+
+		//$userIdsFollowing = Auth::user()->followings()->pluck('follower_id');
+		$posts = Post::withCount(['likes', 'comments'])->whereIn('user_id', $id)->with(['userLikes', 'postImages', 'user' => function ($query) {
+			$query->select(['id', 'name', 'username', 'profile_photo_path']);  
+		},
+		])->get(); 
+		
+		foreach($posts as $post){
+			?>@include('elements.mypost')<?php
+		}
+		//My shared posts
+		$userIds = Share::where('user_id', $id)->select('post_id')->pluck('post_id'); 
+
+        $mySharedPosts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
+            $query->select(['id', 'name', 'username', 'profile_photo_path']);  
+        },
+        ])->get();
+	?>
+		<center><h1>Shared Posts</h1></center>
+	<?php
+		foreach($mySharedPosts as $post){
+			?>@include('elements.mypost')<?php
+		}
+	
+	?>
 </div>

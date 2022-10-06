@@ -21,12 +21,12 @@
                             {{ __('Create Post') }}
                         </x-jet-nav-link>
 
-                        <x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
+                        <!--<x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
                             {{ __('My Post') }}
-                        </x-jet-nav-link>
+                        </x-jet-nav-link>-->
                         
                         <x-jet-nav-link href="/{{ auth()->user()->username }}" :active="request()->routeIs('profile')" >
-                            {{ __('View Profile') }}
+                            {{ __('Profile') }}
                         </x-jet-nav-link>
 
                         <x-jet-nav-link href="/search" :active="request()->routeIs('search')">

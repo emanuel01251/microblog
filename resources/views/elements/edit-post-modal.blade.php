@@ -11,16 +11,20 @@
 				  <span class="block sm:inline text-center">{{ session()->get('post.error') }}</span>
 			</div>
         @endif
+        <!--For Edit-->
         <form wire:submit.prevent="editPost({{ $editPostId }})" >    
-            <!--For Edit-->
+                <?php
+                    $title = App\Models\Post::where('id', $editPostId)->value('title'); 
+                    $body = App\Models\Post::where('id', $editPostId)->value('body'); 
+                ?>
             <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="title" value="{{ __('Title') }}" />
-                <x-jet-input wire:model.lazy="title" id="" name="title" type="text" class="mt-1 block w-full" placeholder="{{ (empty($post->title) ? '' : $post->title) }}" />
+                <x-jet-input wire:model.lazy="title" id="" name="title" type="text" class="mt-1 block w-full" placeholder="{{ $title }}" />
             </div>
 
             <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="body" value="{{ __('Description') }}" />
-                <x-jet-input wire:model.lazy="body" id="" name="body" id="" name="body" type="text" class="mt-1 block w-full" placeholder="{{ (empty($post->body) ? '' : $post->body) }}" />
+                <x-jet-input wire:model.lazy="body" id="" name="body" id="" name="body" type="text" class="mt-1 block w-full" placeholder="{{ $body }}" />
             </div>
 
             {{ __('Are you sure you want to edit this post?') }}

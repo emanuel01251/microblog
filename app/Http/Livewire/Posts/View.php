@@ -298,7 +298,7 @@ class View extends Component
             $posts = Post::withCount(['likes', 'comments'])/*->whereNull('deleted_at')*/->where('user_id', Auth::id())->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
-            ])->latest()->paginate(10);
+            ]);
         } elseif (! empty($this->queryType) && $this->queryType === 'followers') {
             $userIds = Auth::user()->followings()->pluck('follower_id');
             $userIds[] = Auth::id();
@@ -306,13 +306,13 @@ class View extends Component
             $posts = Post::withCount(['likes', 'comments'])->whereIn('user_id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
-            ])->latest()->paginate(10);
+            ]);
 
         } else {
             $posts = Post::withCount(['likes', 'comments'])->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);
             },
-            ])->latest()->paginate(10);
+            ]);
         }
         //My Post - my shared post
         if (! empty($this->queryType) && $this->queryType === 'MyShare') {
@@ -322,7 +322,7 @@ class View extends Component
             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
             },
-            ])->latest()->paginate(10);
+            ]);
 
         }
         //No Content Found of other users - Home
@@ -370,13 +370,13 @@ class View extends Component
                 $posts = Post::withCount(['likes', 'comments'])->where('id', $deletedIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
-                ])->latest()->paginate(10);
+                ]);
             }else{
                 $userIds = $userIds1;
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
-                ])->latest()->paginate(10);
+                ]);
             }   
             $this->noContent = $noContent;
             $this->count = $count;
@@ -424,13 +424,13 @@ class View extends Component
                 $posts = Post::withCount(['likes', 'comments'])->where('id', $deletedIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
-                ])->latest()->paginate(10);
+                ]);
             }else{
                 $userIds = $userIds1;
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
-                ])->latest()->paginate(10);
+                ]);
             }   
             $this->noContent = $noContent;
             $this->count = $count;
@@ -446,7 +446,7 @@ class View extends Component
                 $posts = Post::withCount(['likes', 'comments'])->whereIn('id', [0])->with(['userLikes', 'postImages', 'user' => function ($query) {
                     $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                 },
-                ])->latest()->paginate(10);  
+                ]);
             }else{
                 //Caption
                 foreach($userIds as $ids){
@@ -457,18 +457,19 @@ class View extends Component
                             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userPosts)->with(['userLikes', 'postImages', 'user' => function ($query) {
                                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                             },
-                            ])->latest()->paginate(10);
+                            ]);
                             
                         }else{
                             $posts = Post::withCount(['likes', 'comments'])->whereIn('id', $userPosts)->with(['userLikes', 'postImages', 'user' => function ($query) {
                                 $query->select(['id', 'name', 'username', 'profile_photo_path']);  
                             },
-                            ])->latest()->paginate(10);  
+                            ]);
                         }
                     }   
                 }
             }
+          
         }
-        return $posts;
+        return $posts->paginate(3);
     }
 }
