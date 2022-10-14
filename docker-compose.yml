@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: microblog
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Manila
+    restart: unless-stopped
+    volumes: [ db:/var/lib/mysql ]
+
+  phpmyadmin:
+    image: 'phpmyadmin:latest'
+    ports:
+      - 8081:80
+    links:
+      - "db:db"
+    depends_on:
+      - db
+
+  web:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        PHP_MODE: production
+    depends_on: [ db ]
+    restart: unless-stopped
+    volumes: [ ./:/var/www/html ]
+
+volumes:
+  db:

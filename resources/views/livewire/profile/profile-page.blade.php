@@ -106,6 +106,7 @@ use Livewire\WithPagination;
     </div>
 
 	<!--My Post-->
+	
 	<?php
 		//My posts
 		$id = User::where('username', $user->username)->pluck('id');
@@ -117,11 +118,18 @@ use Livewire\WithPagination;
 		])->get(); 
 		
 		foreach($posts as $post){
-			?>@include('elements.mypost')<?php
+			?>
+			@include('elements.mypost')
+			@include('elements.comments-post-modal')
+			@include('elements.delete-post-modal')
+			@include('elements.edit-post-modal')
+			@include('elements.edit-comments-post-modal')
+			@include('elements.share-post-modal')
+			<?php
 		}
 		//My shared posts
 		$userIds = Share::where('user_id', $id)->select('post_id')->pluck('post_id'); 
-
+	
         $mySharedPosts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {
             $query->select(['id', 'name', 'username', 'profile_photo_path']);  
         },
@@ -130,7 +138,14 @@ use Livewire\WithPagination;
 		<center><h1>Shared Posts</h1></center>
 	<?php
 		foreach($mySharedPosts as $post){
-			?>@include('elements.mypost')<?php
+			?>
+			@include('elements.mypost')
+			@include('elements.comments-post-modal')
+			@include('elements.delete-post-modal')
+			@include('elements.edit-post-modal')
+			@include('elements.edit-comments-post-modal')
+			@include('elements.share-post-modal')
+			<?php
 		}
 	
 	?>
