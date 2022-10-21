@@ -315,7 +315,7 @@ class ProfilePage extends Component
         $this->isOpenViewFollowersModal = true;
         $showFollower = Follower::where('follower_id', $user->id)->select('following_id')->pluck('following_id'); 
 
-        if($showFollower == '[]'){
+        if($showFollower == ''){
             $this->showFollower1 = "You don't have follower.";
         }else{
             $g = 0;
@@ -334,7 +334,7 @@ class ProfilePage extends Component
         $this->isOpenViewFollowingModal = true;
         $showFollowing = Follower::where('following_id', $user->id)->pluck('follower_id'); 
         
-        if($showFollowing == '[]'){
+        if($showFollowing == ''){
             $this->showFollowing1 = "You haven't follow anyone.";
         }else{
             $g = 0;
