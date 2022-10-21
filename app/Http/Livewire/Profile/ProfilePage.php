@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Profile;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Follower;
 use App\Models\Share;
 use App\Models\Post;
 use Auth;
@@ -342,7 +343,6 @@ class ProfilePage extends Component
                 $this->showFollowing1[$g] = $follow;
                 $g++;
             }
-            
         }
     }
 }

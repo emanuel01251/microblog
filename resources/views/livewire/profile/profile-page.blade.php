@@ -110,7 +110,7 @@ use Livewire\WithPagination;
 	<?php
 		//My posts
 		$id = User::where('username', $user->username)->pluck('id');
-
+		
 		//$userIdsFollowing = Auth::user()->followings()->pluck('follower_id');
 		$posts = Post::withCount(['likes', 'comments'])->whereIn('user_id', $id)->with(['userLikes', 'postImages', 'user' => function ($query) {
 			$query->select(['id', 'name', 'username', 'profile_photo_path']);  
@@ -119,7 +119,7 @@ use Livewire\WithPagination;
 		
 		foreach($posts as $post){
 			?>
-			@include('elements.mypost')
+			@include('elements.post')
 			@include('elements.comments-post-modal')
 			@include('elements.delete-post-modal')
 			@include('elements.edit-post-modal')
@@ -128,6 +128,12 @@ use Livewire\WithPagination;
 			<?php
 		}
 		//My shared posts
+		$name = User::where('username', $user->username)->value('name');
+		$profilepic = User::where('username', $name)->get();
+
+		foreach($profilepic as $profile){
+			$profilepic = $profile->profile_photo_url;
+		}
 		$userIds = Share::where('user_id', $id)->select('post_id')->pluck('post_id'); 
 	
         $mySharedPosts = Post::withCount(['likes', 'comments'])->whereIn('id', $userIds)->with(['userLikes', 'postImages', 'user' => function ($query) {

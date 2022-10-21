@@ -281,7 +281,7 @@ class View extends Component
         }
         else if(! empty($this->queryType) && $this->queryType === 'shareNoContentUser'){
             $userIds = Post::onlyTrashed()->pluck('id');
-            $shares = Share::where('user_id', 3)->select('caption', 'post_id', 'user_id')->get();
+            $shares = Share::whereIn('user_id', $userIds)->select('caption', 'post_id', 'user_id')->get();
         }
         else{
             $shares = Share::whereIn('user_id', [0])->select('caption', 'post_id')->get();

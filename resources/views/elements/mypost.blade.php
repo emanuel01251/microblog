@@ -1,6 +1,40 @@
+<?php
+
+namespace App\Http\Livewire\Posts;
+
+use App\Models\Share;
+
+?>
 <div class="flex flex-col mx-2 my-5 md:mx-6 md:my-12 lg:my-12 lg:w-2/5 lg:mx-auto">
             <div class="bg-white shadow-md  rounded-3xl p-4">
                     <div class="flex flex-wrap ">
+                            <?php
+                                $shares = Share::whereIn('user_id', $id)->select('caption', 'post_id')->get();
+                                foreach($shares as $share){
+                                    if($share->post_id == $post->id){
+                                        ?>
+                                        <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                                            <a href="{{ route('profile', ['username' => $name]) }}">
+                                                <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
+                                                    wire:offline.class="filter grayscale" src="{{ $profilepic }}" alt="{{ $name }}" />
+                                                <?php
+                                                    echo "Shared by @" . $name;
+                                                ?>
+                                            </a>
+                                        </div>
+                                            
+                                        <div class="w-full flex-none mb-2 text-xs text-black-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
+                                            <h2 class="flex-auto text-lg font-medium">
+                                                <?php
+                                                    echo $share->caption;
+                                                ?>
+                                            </h2>
+                                        </div>
+                                        <?php               
+                                    }
+                                }    
+                            ?>
+                        
                     </div>
                 <div class="flex-none">
                     <div class="h-full w-full  mb-3 filter" wire:offline.class="grayscale">
