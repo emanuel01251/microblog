@@ -129,7 +129,8 @@ use Livewire\WithPagination;
 		}
 		//My shared posts
 		$name = User::where('username', $user->username)->value('name');
-		$profilepic = User::where('username', $name)->get();
+		$username = User::where('username', $user->username)->value('username');
+		$profilepic = User::where('username', $username)->get();
 
 		foreach($profilepic as $profile){
 			$profilepic = $profile->profile_photo_url;

@@ -14,7 +14,7 @@ use App\Models\Share;
                                     if($share->post_id == $post->id){
                                         ?>
                                         <div class="w-full flex-none mb-2 text-xs text-blue-700 font-medium" wire:offline.class.remove="text-blue-700" wire:offline.class="text-gray-400">
-                                            <a href="{{ route('profile', ['username' => $name]) }}">
+                                            <a href="{{ route('profile', ['username' => $username]) }}">
                                                 <img class="inline-block object-cover w-8 h-8 mr-1 text-white rounded-full shadow-sm cursor-pointer" 
                                                     wire:offline.class="filter grayscale" src="{{ $profilepic }}" alt="{{ $name }}" />
                                                 <?php
