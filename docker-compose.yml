@@ -25,6 +25,8 @@ services:
       args:
         PHP_MODE: production
     depends_on: [ db ]
+    ports:
+      - "8000:80"  # Change from default 80 to 8000
     restart: unless-stopped
     volumes: [ ./:/var/www/html ]
 
