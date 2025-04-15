@@ -7,16 +7,16 @@
                 <div class="flex-shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
                         <!-- <x-jet-application-mark class="block h-9 w-auto" /> -->
-                        <img src="{{ url('https://media.glassdoor.com/sqll/1960738/yns-squarelogo-1533819178590.png') }}" class="block h-9 w-auto"/>
+                        <img src="{{ url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png') }}" class="block h-9 w-auto"/>
                     </a>
                 </div>
-                
+
                     <!-- Navigation Links -->
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-jet-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
                             {{ __('Home') }}
                         </x-jet-nav-link>
-                        
+
                         <x-jet-nav-link href="{{ route('posts.create') }}" :active="request()->routeIs('posts.create')">
                             {{ __('Create Post') }}
                         </x-jet-nav-link>
@@ -24,7 +24,7 @@
                         <!--<x-jet-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.index')">
                             {{ __('My Post') }}
                         </x-jet-nav-link>-->
-                        
+
                         <x-jet-nav-link href="/{{ auth()->user()->username }}" :active="request()->routeIs('profile')" >
                             {{ __('Profile') }}
                         </x-jet-nav-link>
@@ -32,14 +32,14 @@
                         <x-jet-nav-link href="/search" :active="request()->routeIs('search')">
                             {{ __('Search') }}
                         </x-jet-nav-link>
-                       
+
                         @can('viewAny', auth()->user())
                         <x-jet-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.create')">
                             {{ __('Manage Users') }}
                         </x-jet-nav-link>
                         @endcan
                     </div>
-               
+
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -134,15 +134,15 @@
             <x-jet-responsive-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
                 {{ __('Home') }}
             </x-jet-responsive-nav-link>
-            
+
             <x-jet-responsive-nav-link href="{{ route('posts.create') }}" :active="request()->routeIs('posts.create')">
                 {{ __('Create post') }}
             </x-jet-responsive-nav-link>
-            
+
             <x-jet-responsive-nav-link href="/{{ auth()->user()->username }}" :active="request()->routeIs('profile')">
                 {{ __('View Profile') }}
             </x-jet-responsive-nav-link>
-            
+
             @can('viewAny', auth()->user())
             <x-jet-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.create')">
                 {{ __('Manage Users') }}

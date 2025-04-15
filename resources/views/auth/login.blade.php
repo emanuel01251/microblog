@@ -2,7 +2,7 @@
     <x-jet-authentication-card>
         <x-slot name="logo">
             <!---<x-jet-authentication-card-logo />-->
-            <img src="{{ url('https://media.glassdoor.com/sqll/1960738/yns-squarelogo-1533819178590.png') }}" />
+            <img src="{{ url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png') }}" class="block h-9 w-auto"/>
         </x-slot>
 
         <x-jet-validation-errors class="mb-4" />
@@ -44,12 +44,12 @@
                     {{ __('Log in') }}
                 </x-jet-button>
             </div>
-            
-            
+
+
             Don't have an account yet. <a class="underline" href="{{ route('register') }}">Sign up</a> now.
-            
+
         </form>
-        
+
     </x-jet-authentication-card>
-	
+
 </x-guest-layout>

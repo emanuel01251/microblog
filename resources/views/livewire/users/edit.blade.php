@@ -2,7 +2,7 @@
     <x-jet-authentication-card>
         <x-slot name="logo">
             <!---<x-jet-authentication-card-logo />-->
-            <img src="{{ url('https://media.glassdoor.com/sqll/1960738/yns-squarelogo-1533819178590.png') }}" />
+            <img src="{{ url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png') }}" class="block h-9 w-auto" />
         </x-slot>
 
         <x-jet-validation-errors class="mb-4" />
@@ -14,17 +14,17 @@
                 <x-jet-label for="name" value="{{ __('Name') }}" />
                 <x-jet-input id="name" class="block mt-1 w-full" type="text" name="name" wire:model.lazy="name" />
             </div>
-            
+
             <div class="mt-4">
                 <x-jet-label for="username" value="{{ __('Username') }}" />
                 <x-jet-input id="username" class="block mt-1 w-full" type="text" name="username" wire:model.lazy="username" />
             </div>
-            
+
             <div class="mt-4">
                 <x-jet-label for="email" value="{{ __('Email') }}" />
                 <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" wire:model.lazy="email" />
             </div>
-            
+
             <div class="mt-4">
                 <x-jet-label for="is_private" value="{{ __('Account visibility') }}" />
                 <select id="is_private" class="block border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 w-full" wire:model.lazy="is_private">
@@ -32,7 +32,7 @@
 	                <option value="1">Private</option>
                 <select>
             </div>
-            
+
             <div class="mt-4">
                 <x-jet-label for="is_private" value="{{ __('Account Role') }}" />
                 <select id="is_private" class="block border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 w-full" wire:model.lazy="role_id">
