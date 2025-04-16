@@ -7,7 +7,11 @@ services:
       MYSQL_ROOT_PASSWORD: password
       TZ: Asia/Manila
     restart: unless-stopped
-    volumes: [ db:/var/lib/mysql ]
+    volumes:
+      - db:/var/lib/mysql
+      # Add MySQL configuration directly through volume
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    command: --default-authentication-plugin=mysql_native_password
 
   phpmyadmin:
     image: 'phpmyadmin:latest'
@@ -24,11 +28,26 @@ services:
       context: .
       args:
         PHP_MODE: production
-    depends_on: [ db ]
+    depends_on: [ db, redis ]
     ports:
-      - "8000:80"  # Change from default 80 to 8000
+      - "8000:80"
     restart: unless-stopped
-    volumes: [ ./:/var/www/html ]
+    volumes:
+      - .:/var/www/html:cached
+      - vendor:/var/www/html/vendor
+    environment:
+      PHP_MEMORY_LIMIT: 2G
+      PHP_MAX_EXECUTION_TIME: 300
+      PHP_OPCACHE_ENABLE: 1
+      PHP_REALPATH_CACHE_SIZE: 4096K
+      PHP_REALPATH_CACHE_TTL: 600
+      COMPOSER_MEMORY_LIMIT: -1
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
 
 volumes:
   db:
+  vendor:
