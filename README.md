@@ -1,6 +1,38 @@
 # Microblog Application
 
-A Laravel-based microblogging application running with Docker.
+A Laravel 9.7-based microblogging application running with Docker. This project is inspired by Instagram and Twitter, created as a learning journey to explore modern web development practices using Laravel framework and Docker containerization.
+
+> **Note:** This project is currently a work in progress. Some features may be incomplete or subject to change.
+
+## Features
+
+- **User Authentication & Authorization**
+  - Secure login and registration
+  - Role-based access control
+  - Profile privacy settings
+
+- **Content Management**
+  - Create posts with images and videos
+  - Edit and delete your own content
+  - Comment on posts
+  - Like and share functionality
+
+- **Profile Management**
+  - Customize profile information
+  - Upload and edit profile pictures
+  - View personal post history
+
+- **Social Features**
+  - Follow/Unfollow other users
+  - View followers and following lists
+  - Search for other users
+  - View other users' profiles and posts
+
+- **Share Functionality**
+  - Share posts to your profile
+  - Add custom captions to shared content
+  - View shared posts in feed
+  - Track and manage shared content
 
 ## Prerequisites
 
