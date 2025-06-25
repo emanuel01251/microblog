@@ -126,3 +126,20 @@ docker-compose up -d --build
    - Ensure Node.js is installed in the container
    - Check if the container is running: `docker-compose ps`
    - Try rebuilding the container: `docker-compose up -d --build`
+
+3. Laravel log or cache permission errors
+
+   If you see an error like:
+
+   ```
+   The stream or file "/var/www/html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+   ```
+
+   You can fix it by running:
+
+   ```bash
+   docker-compose run --rm web chmod -R 777 storage bootstrap/cache
+   ```
+
+   This command gives the necessary write permissions to the folders Laravel needs.
+   **Note:** This is safe for local development, but not recommended for production.
