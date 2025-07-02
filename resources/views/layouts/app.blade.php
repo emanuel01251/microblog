@@ -24,9 +24,9 @@
         <x-jet-banner />
 
         <div class="min-h-screen bg-gray-100">
-          
+
             @livewire('navigation-menu')
-      
+
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">
@@ -45,5 +45,29 @@
         @stack('modals')
 
         @livewireScripts
+
+        <!-- PH Timezone Display Script -->
+        <script>
+            function updatePHTime() {
+                const options = {
+                    timeZone: 'Asia/Manila',
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                };
+
+                const phTime = new Date().toLocaleString('en-US', options);
+                document.querySelector('#ph-time div').textContent = phTime;
+            }
+
+            // Update time immediately and then every second
+            updatePHTime();
+            setInterval(updatePHTime, 1000);
+        </script>
     </body>
 </html>

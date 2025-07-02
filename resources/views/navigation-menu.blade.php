@@ -43,6 +43,11 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                <!-- PH Timezone Display -->
+                <div class="mr-4 text-sm text-gray-500" id="ph-time">
+                    <div class="font-semibold"></div>
+                </div>
+
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
