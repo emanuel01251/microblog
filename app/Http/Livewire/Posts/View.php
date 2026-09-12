@@ -7,7 +7,7 @@ use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Share;
 use App\Models\Post;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;

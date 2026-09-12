@@ -27,13 +27,13 @@ class Create extends Component
     public function mount()
     {
         $ipAddress = $this->getIp();
-        $position = Location::get($ipAddress);
+        // $position = Location::get($ipAddress); //commented out to avoid long delays in loading the page due to the location service
 
-        if ($position) {
+        /* if ($position) {
             $this->location = $position->cityName . '/' . $position->regionCode;
         } else {
             $this->location = null;
-        }
+        } */
     }
 
     public function updatedFile()

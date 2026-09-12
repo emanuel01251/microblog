@@ -169,12 +169,12 @@ use App\Models\Share;
                                     @if( $post->userShares() )
                                         <div class="text-green-400 hover:text-green-500 rounded-lg" wire:offline.class.remove="text-green-400 hover:text-green-500">
                                             <span class="text-black-400 hover:text-gray-500 rounded-lg">
-                                                {{_('Shared')}}
+                                                {{__('Shared')}}
                                             </span>
                                         </div>
                                     @else
                                         <span class="text-black-400 hover:text-gray-500 rounded-lg">
-                                            {{_('Share')}}
+                                            {{__('Share')}}
                                         </span>
                                     @endif
                                     <span>{{ $post->shares_count }}</span>
