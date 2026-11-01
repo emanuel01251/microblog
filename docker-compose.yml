@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   db:
     image: mysql:8.0
@@ -7,10 +6,12 @@ services:
       MYSQL_ROOT_PASSWORD: password
       TZ: Asia/Manila
     restart: unless-stopped
+    ports:
+      - "3308:3306"
     volumes: [ db:/var/lib/mysql ]
 
   phpmyadmin:
-    image: 'phpmyadmin:latest'
+    image: phpmyadmin:5-apache
     ports:
       - 8083:80
     links:
@@ -19,6 +20,7 @@ services:
       - db
 
   web:
+    profiles: [ container-app ]
     build:
       dockerfile: Dockerfile
       context: .
@@ -29,6 +31,13 @@ services:
       - "8000:80"  # Change from default 80 to 8000
     restart: unless-stopped
     volumes: [ ./:/var/www/html ]
+
+  # Frontend tooling is kept out of the PHP/Apache runtime image.
+  node:
+    image: node:18-alpine
+    working_dir: /var/www/html
+    volumes: [ ./:/var/www/html ]
+    profiles: [ tools ]
 
 volumes:
   db:

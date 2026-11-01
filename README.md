@@ -1,6 +1,6 @@
 # Microblog Application
 
-A Laravel 9.7-based microblogging application running with Docker. This project is inspired by Instagram and Twitter, created as a learning journey to explore modern web development practices using Laravel framework and Docker containerization.
+A Laravel 9.7-based microblogging application. Laravel runs natively on Windows for fast file access, while MySQL and phpMyAdmin run in Docker.
 
 > **Note:** This project is currently a work in progress. Some features may be incomplete or subject to change.
 
@@ -38,6 +38,9 @@ A Laravel 9.7-based microblogging application running with Docker. This project 
 
 - Docker
 - Docker Compose
+- PHP 8.2 or newer with the required Laravel extensions
+- Composer
+- Node.js and npm
 
 ## Installation Steps
 
@@ -47,26 +50,26 @@ git clone <repository-url>
 cd <project-directory>
 ```
 
-2. Start the Docker containers:
+2. Start MySQL and phpMyAdmin:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-3. Install PHP dependencies using Composer:
+3. Install PHP dependencies using Composer on Windows:
 ```bash
-docker-compose exec web composer install
+composer install
 ```
 
 4. Copy the environment file:
 ```bash
-cp .env.example .env
+Copy-Item .env.example .env
 ```
 
 5. Update the database configuration in `.env`:
 ```env
 DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
+DB_HOST=127.0.0.1
+DB_PORT=3308
 DB_DATABASE=microblog
 DB_USERNAME=root
 DB_PASSWORD=password
@@ -74,28 +77,33 @@ DB_PASSWORD=password
 
 6. Generate application key:
 ```bash
-docker-compose exec web php artisan key:generate
+php artisan key:generate
 ```
 
 7. Run database migrations:
 ```bash
-docker-compose exec web php artisan migrate
+php artisan migrate
 ```
 
 8. Install Node.js dependencies:
 ```bash
-docker-compose exec web npm install
+npm install
 ```
 
 9. Compile assets:
 ```bash
-docker-compose exec web npm run dev
+npm run dev
+```
+
+10. Start Laravel:
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
 ## Accessing the Application
 
 - Main application: http://localhost:8000
-- PHPMyAdmin: http://localhost:8081
+- PHPMyAdmin: http://localhost:8083
   - Username: root
   - Password: password
 
@@ -103,29 +111,28 @@ docker-compose exec web npm run dev
 
 - Stop containers:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 - View container logs:
 ```bash
-docker-compose logs
+docker compose logs
 ```
 
-- Rebuild containers:
+- Rebuild the optional containerized web application:
 ```bash
-docker-compose up -d --build
+docker compose --profile container-app up -d --build
 ```
 
 ## Troubleshooting
 
-1. If port 80 is in use by IIS on Windows:
-   - Either stop IIS using `net stop was /y` (requires admin privileges)
-   - Or modify the port in docker-compose.yml to use port 8000 instead
+1. The Docker MySQL host port is `3308` because ports `3306` and `3307` are already used by Windows MySQL processes.
+   - If you free port 3306 later, you can change the host-side port in `docker-compose.yml`.
+   - Update `DB_PORT` in `.env` to match the host-side port.
 
 2. If npm commands fail:
-   - Ensure Node.js is installed in the container
-   - Check if the container is running: `docker-compose ps`
-   - Try rebuilding the container: `docker-compose up -d --build`
+   - Ensure Node.js and npm are installed on Windows.
+   - Run `npm install` again, then retry `npm run dev`.
 
 3. Laravel log or cache permission errors
 
@@ -135,11 +142,16 @@ docker-compose up -d --build
    The stream or file "/var/www/html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
    ```
 
-   You can fix it by running:
+   On Windows, run:
 
    ```bash
-   docker-compose run --rm web chmod -R 777 storage bootstrap/cache
+   php artisan optimize:clear
    ```
 
-   This command gives the necessary write permissions to the folders Laravel needs.
-   **Note:** This is safe for local development, but not recommended for production.
+4. To use the old Docker-based PHP/Apache workflow instead:
+
+   ```bash
+   docker compose --profile container-app up -d --build
+   ```
+
+   Do not run it at the same time as `php artisan serve` because both use port 8000.
