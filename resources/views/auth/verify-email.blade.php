@@ -1,7 +1,7 @@
 <x-guest-layout>
-    <x-jet-authentication-card>
+    <x-authentication-card>
         <x-slot name="logo">
-            <!---<x-jet-authentication-card-logo />-->
+            <!---<x-authentication-card-logo />-->
             <img src="{{ url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png') }}" class="block h-9 w-auto" />
         </x-slot>
 
@@ -20,9 +20,9 @@
                 @csrf
 
                 <div>
-                    <x-jet-button type="submit">
+                    <x-button type="submit">
                         {{ __('Resend Verification Email') }}
-                    </x-jet-button>
+                    </x-button>
                 </div>
             </form>
 
@@ -34,5 +34,5 @@
                 </button>
             </form>
         </div>
-    </x-jet-authentication-card>
+    </x-authentication-card>
 </x-guest-layout>

@@ -1,5 +1,5 @@
 <!-- Edit User Comment Modal -->
-<x-jet-dialog-modal wire:model="isOpenViewFollowingModal">
+<x-dialog-modal wire:model="isOpenViewFollowingModal">
     <x-slot name="title">
         {{ __('Your Following') }}
     </x-slot>
@@ -23,11 +23,11 @@
     </x-slot>
 
     <x-slot name="footer">
-        <x-jet-secondary-button wire:click="$toggle('isOpenViewFollowingModal')" wire:loading.attr="enabled">
+        <x-secondary-button wire:click="$toggle('isOpenViewFollowingModal')" wire:loading.attr="enabled">
             {{ __('Ok') }}
-        </x-jet-secondary-button>
+        </x-secondary-button>
         
         </form>
     </x-slot>
 
-</x-jet-dialog-modal>
+</x-dialog-modal>

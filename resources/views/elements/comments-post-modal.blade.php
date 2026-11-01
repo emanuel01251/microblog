@@ -1,5 +1,5 @@
 <!-- Delete User Comment Modal -->
-<x-jet-dialog-modal wire:model="isOpenCommentModal">
+<x-dialog-modal wire:model="isOpenCommentModal">
   <x-slot name="title">
     {{ __('Comments') }}
   </x-slot>
@@ -14,22 +14,22 @@
     <form wire:submit.prevent="createComment({{ $postId }})" >
       <div class="mt-4" >
         <textarea class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 
-          focus:ring-opacity-50 rounded-md shadow-sm mt-1 block" wire:model.lazy="comment"
+          focus:ring-opacity-50 rounded-md shadow-sm mt-1 block" wire:model.live.blur="comment"
             placeholder="{{ __('Your comment') }}"> 
         
         </textarea>
-        <x-jet-input-error for="comment" class="mt-2" />
+        <x-input-error for="comment" class="mt-2" />
       </div>
   </x-slot>
 
   <x-slot name="footer">
-    <x-jet-secondary-button wire:click="$toggle('isOpenCommentModal')" wire:loading.attr="enabled">
+    <x-secondary-button wire:click="$toggle('isOpenCommentModal')" wire:loading.attr="enabled">
       {{ __('Cancel') }}
-    </x-jet-secondary-button>
+    </x-secondary-button>
     
-    <x-jet-button type="submit" class="ml-2" wire:loading.attr="enabled">
+    <x-button type="submit" class="ml-2" wire:loading.attr="enabled">
       {{ __('Post Comment') }}
-    </x-jet-button>
+    </x-button>
     </form>
   </x-slot>
             
@@ -86,4 +86,4 @@
         
     @endforelse
   </x-slot>
-</x-jet-dialog-modal>
+</x-dialog-modal>

@@ -1,14 +1,10 @@
 <?php
 
-namespace App\Http\Livewire\Posts;
-
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Share;
 use App\Models\Post;
-use Auth;
-use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;

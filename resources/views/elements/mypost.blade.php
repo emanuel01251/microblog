@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Http\Livewire\Posts;
-
 use App\Models\Share;
 
 ?>

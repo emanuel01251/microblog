@@ -1,6 +1,6 @@
 # Microblog Application
 
-A Laravel 9.7-based microblogging application. Laravel runs natively on Windows for fast file access, while MySQL and phpMyAdmin run in Docker.
+A Laravel 13 microblogging application using Livewire 4, Jetstream 5, Sanctum 4, and Vite. Laravel, MySQL, and phpMyAdmin run in Docker for a consistent PHP 8.3.36 runtime.
 
 > **Note:** This project is currently a work in progress. Some features may be incomplete or subject to change.
 
@@ -38,9 +38,16 @@ A Laravel 9.7-based microblogging application. Laravel runs natively on Windows 
 
 - Docker
 - Docker Compose
-- PHP 8.2 or newer with the required Laravel extensions
+- PHP 8.3.36 or newer, below PHP 8.4, with the required Laravel extensions. This patched PHP 8.3 baseline is required for the PHP2Shell security fix.
 - Composer
-- Node.js and npm
+- Node.js 22.12 or newer and npm
+
+Verify the PHP runtime before installing dependencies:
+```bash
+php -v
+```
+
+If Windows still reports the old XAMPP PHP 8.2 runtime, upgrade the PHP runtime or use the provided PHP 8.3.36 Docker image before running Composer or Artisan.
 
 ## Installation Steps
 
@@ -50,7 +57,7 @@ git clone <repository-url>
 cd <project-directory>
 ```
 
-2. Start MySQL and phpMyAdmin:
+2. Start the Docker services:
 ```bash
 docker compose up -d
 ```
@@ -85,19 +92,28 @@ php artisan key:generate
 php artisan migrate
 ```
 
-8. Install Node.js dependencies:
+8. Install frontend dependencies:
 ```bash
 npm install
 ```
 
 9. Compile assets:
 ```bash
-npm run dev
+npm run build
 ```
 
-10. Start Laravel:
+10. Start Laravel with the patched PHP 8.3.36 Apache container:
 ```bash
-php artisan serve --host=127.0.0.1 --port=8000
+docker compose up -d --build
+```
+
+Open http://localhost:8000. Do not run `php artisan serve` until the host `php -v` reports PHP 8.3.36 or newer and below PHP 8.4.
+
+The container caches Laravel configuration and rechecks PHP files every 60 seconds to reduce Windows bind-mount
+overhead during development. Restart the web service after PHP or Blade changes if you need them picked up immediately:
+
+```bash
+docker compose restart web
 ```
 
 ## Accessing the Application
@@ -109,6 +125,29 @@ php artisan serve --host=127.0.0.1 --port=8000
 
 ## Useful Commands
 
+- Run the test suite with the in-memory SQLite database configured in `phpunit.xml`:
+```bash
+php artisan test
+```
+
+- Verify the dependency and runtime requirements:
+```bash
+composer audit --locked
+composer check-platform-reqs
+php artisan view:cache
+php artisan route:list
+```
+
+- Recreate and seed a local database when testing schema changes:
+```bash
+php artisan migrate:fresh --seed
+```
+
+- Build the production frontend bundle with Vite:
+```bash
+npm run build
+```
+
 - Stop containers:
 ```bash
 docker compose down
@@ -119,9 +158,9 @@ docker compose down
 docker compose logs
 ```
 
-- Rebuild the optional containerized web application:
+- Rebuild the containerized application:
 ```bash
-docker compose --profile container-app up -d --build
+docker compose up -d --build
 ```
 
 ## Troubleshooting
@@ -131,8 +170,8 @@ docker compose --profile container-app up -d --build
    - Update `DB_PORT` in `.env` to match the host-side port.
 
 2. If npm commands fail:
-   - Ensure Node.js and npm are installed on Windows.
-   - Run `npm install` again, then retry `npm run dev`.
+   - Ensure Node.js 22.12+ and npm are installed on Windows.
+   - Run `npm install` again, then retry `npm run build`.
 
 3. Laravel log or cache permission errors
 
@@ -148,10 +187,5 @@ docker compose --profile container-app up -d --build
    php artisan optimize:clear
    ```
 
-4. To use the old Docker-based PHP/Apache workflow instead:
-
-   ```bash
-   docker compose --profile container-app up -d --build
-   ```
-
-   Do not run it at the same time as `php artisan serve` because both use port 8000.
+4. The web service is included in the default `docker compose up -d` stack. Do not run it at the same time as
+   `php artisan serve` because both use port 8000.

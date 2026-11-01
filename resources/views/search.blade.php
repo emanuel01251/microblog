@@ -8,7 +8,7 @@
         
     </style>
         <div class="mt-4">
-            <x-jet-label>@livewire('filter')</x-jet-label>
+            <x-label>@livewire('filter')</x-label>
         </div>
             
     </div>

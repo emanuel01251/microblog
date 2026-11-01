@@ -1,14 +1,10 @@
 <?php
 
-namespace App\Http\Livewire\Posts;
-
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Share;
 use App\Models\Post;
-use Auth;
-use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
@@ -18,7 +14,7 @@ use Livewire\WithPagination;
     <div class="container">
 	    <div class="row">
 	        <div class="col-md-12">	            
-	            <input type="text"  class="form-control" placeholder="Search" wire:model="searchTerm" />
+	            <input type="text"  class="form-control" placeholder="Search" wire:model.live="searchTerm" />
 	            <table class="table table-bordered" style="margin: 10px 0 10px 0;">
 	                <tr>
 						<th></th>

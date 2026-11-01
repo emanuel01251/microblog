@@ -20,13 +20,15 @@ services:
       - db
 
   web:
-    profiles: [ container-app ]
     build:
       dockerfile: Dockerfile
       context: .
       args:
         PHP_MODE: production
     depends_on: [ db ]
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
     ports:
       - "8000:80"  # Change from default 80 to 8000
     restart: unless-stopped
@@ -34,7 +36,7 @@ services:
 
   # Frontend tooling is kept out of the PHP/Apache runtime image.
   node:
-    image: node:18-alpine
+    image: node:22-alpine
     working_dir: /var/www/html
     volumes: [ ./:/var/www/html ]
     profiles: [ tools ]
